@@ -58,6 +58,7 @@ folder:
     custom:    include('fileTransition', required=False)
 
 filter:
+  order:  int() # specify this manually - use this in the generation code....
   custom: include('processInfo')
   custom: include('in')
   custom: include('out')
