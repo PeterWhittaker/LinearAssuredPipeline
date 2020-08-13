@@ -1,14 +1,6 @@
-processes: list(include('process'), min=1)
+processes: list(include('process'), min=1))
 
-process:  # one of these is required, how to enforce?
-# 'processes' enforces a minimum of 1
-  custom: include('receiver', required=False)
-  custom: include('sender', required=False)
-  custom: include('getter', required=False)
-  custom: include('pipeline', required=False)
-  custom: include('filter', required=False)
-  custom: include('admin', required=False)
-  custom: include('auth', required=False)
+process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
 
 receiver:
   custom: include('networkAgentCommon')
@@ -50,13 +42,11 @@ pipelineElement:
   custom: include('filters', required=False)
   custom: include('exit')
  
-entry: # one of these is required, how to enforce?
-  custom: include('receiver', required=False)
-  custom: include('getter', required=False)
+entry: any(include('receiver'), include('getter'))
 
-exit: # probably always a sender, but maybe a folder, maybe
-  custom: include('sender') # required=False
-  # custom: include('folder', required=False)
+# Probably only ever a sender, but maybe folders? TBD...
+exit: any(include('sender'))
+#exit: any(include('sender'), include('folder'))
 
 # hmm, if we use filters, there must be at least one,
 # but filters are optional - cf pipelineElement above
@@ -98,10 +88,7 @@ processInfo:
   custom:       include('processType')
   custom:       include('startedBy')
 
-startedBy:  # one of these must be included - how to verify?
-  custom:       include('user', required=False)
-  custom:       include('system', required=False)
-  custom:       include('process', required=False)
+startedBy: any(include('user'), include('system'), include('process'))
 
 user:
   custom: include('role')
@@ -122,3 +109,4 @@ path:          str()  # for now; likely
 role:          str()  # an SELinux role
 processType:   str()  # the actual SELinux type for the process
 folderType:    str()  # the actual SELinux type for the folder
+
