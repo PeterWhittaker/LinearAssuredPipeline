@@ -1,83 +1,113 @@
-# tags:         has includes canHave override
+processes: list(include('process'), min=1)
 
-require:        processes
+process:  # one of these is required, how to enforce?
+# 'processes' enforces a minimum of 1
+  custom: include('receiver', required=False)
+  custom: include('sender', required=False)
+  custom: include('getter', required=False)
+  custom: include('chain', required=False)
+  custom: include('filter', required=False)
+  custom: include('admin', required=False)
+  custom: include('auth', required=False)
 
-
-processes:      process processes
-
-process:        receiver sender getter chain filter admin auth
-
-receiver:       
-    has:        protocol interfaceType port
-    includes:   processInfo folder
+receiver:
+  custom: include('networkAgentCommon')
+  # I'd rather do this, but it is messier than I thought
+  # custom: include('protocol')
+  protocol: enum('udp')
+  custom: include('port')
 
 sender:
-    has:        protocol interfaceType
-    includes:   processInfo folder
+  custom: include('networkAgentCommon')
+  # I'd rather do this, but it is messier than I thought
+  # custom: include('protocol')
+  protocol: enum('udp','ssh')
 
 getter:
-    has:        protocol interfaceType
-    includes:   processInfo folder
-    override:   # only supported protocol
-        protocol:   ssh
+  custom: include('networkAgentCommon')
+  # I'd rather do this, but it is messier than I thought
+  # custom: include('protocol')
+  protocol: enum('ssh')
 
-protocol:       udp ssh # (tcp?)
+networkAgentCommon:
+  custom: include('interfaceType')
+  custom: include('processInfo')
+  custom: include('folder')
 
-chain:          first [filters] last
+# I'd rather do this, but it is messier than I thought
+# protocol: enum('tcp', 'udp', 'ssh') # protocol varies by agent
 
-first:          receiver getter # (folder?)
+# this is a list, not an enum - but a list as a sequence
+# is there always a filter?
+chain:          enum(first [filters] last
+ 
+first: # one of these is required, how to enforce?
+  custom: include('receiver', required=False)
+  custom: include('getter', required=False))
 
-last:           sender # (folder?)
+last: # probably always a sender, but maybe a folder, maybe
+  custom: include('sender') # required=False
+  # custom: include('folder', required=False)
 
-filters:        filter filters
+filters: list(include('filter'))
 
 folder:
-    has:        path folderType
-    canHave:    fileTransition
+    custom:    include('path')
+    custom:    include('folderType')
+    custom:    include('fileTransition', required=False)
 
 filter:
-    includes:   processInfo
-    has:        in out err
-    canHave:    canExecs
+  custom: include('processInfo')
+  custom: include('in')
+  custom: include('out')
+  custom: include('err')
+  custom: include('canExecs', required=False)
 
-canExecs:       canExec canExecs
+canExecs: list(include('canExec'))
 
 canExec:
-    includes:   processInfo
+  custom: include('processInfo')
 
 in:
-    includes:   folder
+  custom:       include('folder')
 
 out:
-    includes:   folder
+  custom:       include('folder')
 
 err:
-    includes:   folder
+  custom:       include('folder')
 
 admin:
-    includes:   processInfo
+  custom:       include('processInfo')
 
 auth:
-    includes:   processInfo
+  custom:       include('processInfo')
 
 processInfo:
-    has:        processType startedBy
+  custom:       include('processType')
+  custom:       include('startedBy')
 
-startedBy:      user system process
+startedBy:  # one of these must be included - how to verify?
+  custom:       include('user', required=False)
+  custom:       include('system', required=False)
+  custom:       include('process', required=False)
 
 user:
-    has:        role
-    canHave:    processTransition
+  custom: include('role')
+  custom: include('processTransition', required=False)
 
 system:
-    has:        initTransition
+  custom: include('initTtransition')
 
-fileTransition: <automaticallyDerived>
-initTransition: <automaticallyDerived>
-processTransition:      <derived>
+# primitives/terminals to be validated
+fileTransition:    str() # for now
+initTransition:    str() # for now
+processTransition: str() # for now
 
-port:           <terminal:???>
-interfaceType:  <terminal:type>
-path:           <terminal:path>
-processType:    <terminal:type>
-role:           <terminal:role>
+# fairly well understood primitives/terminals
+port:          int()
+interfaceType: str()  # the SELinux type for the interface
+path:          str()  # for now; likely
+role:          str()  # an SELinux role
+processType:   str()  # the actual SELinux type for the process
+folderType:    str()  # the actual SELinux type for the folder
