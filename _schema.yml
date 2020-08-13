@@ -43,7 +43,7 @@ pipeline:          enum(entry [filters] exit) # still working on this
  
 entry: # one of these is required, how to enforce?
   custom: include('receiver', required=False)
-  custom: include('getter', required=False))
+  custom: include('getter', required=False)
 
 exit: # probably always a sender, but maybe a folder, maybe
   custom: include('sender') # required=False
