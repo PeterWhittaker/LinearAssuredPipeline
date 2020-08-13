@@ -1,0 +1,8 @@
+Figure out to how enforce one when all have required=False
+    open an issue?
+
+Figure out how to enforce a sequence
+
+Filters, getters, senders, receivers, should have names
+
+Write a test file
