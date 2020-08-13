@@ -5,7 +5,7 @@ process:  # one of these is required, how to enforce?
   custom: include('receiver', required=False)
   custom: include('sender', required=False)
   custom: include('getter', required=False)
-  custom: include('chain', required=False)
+  custom: include('pipeline', required=False)
   custom: include('filter', required=False)
   custom: include('admin', required=False)
   custom: include('auth', required=False)
@@ -39,13 +39,13 @@ networkAgentCommon:
 
 # this is a list, not an enum - but a list as a sequence
 # is there always a filter?
-chain:          enum(first [filters] last
+pipeline:          enum(entry [filters] exit) # still working on this
  
-first: # one of these is required, how to enforce?
+entry: # one of these is required, how to enforce?
   custom: include('receiver', required=False)
   custom: include('getter', required=False))
 
-last: # probably always a sender, but maybe a folder, maybe
+exit: # probably always a sender, but maybe a folder, maybe
   custom: include('sender') # required=False
   # custom: include('folder', required=False)
 
