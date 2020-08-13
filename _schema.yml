@@ -1,0 +1,83 @@
+# tags:         has includes canHave override
+
+require:        processes
+
+
+processes:      process processes
+
+process:        receiver sender getter chain filter admin auth
+
+receiver:       
+    has:        protocol interfaceType port
+    includes:   processInfo folder
+
+sender:
+    has:        protocol interfaceType
+    includes:   processInfo folder
+
+getter:
+    has:        protocol interfaceType
+    includes:   processInfo folder
+    override:   # only supported protocol
+        protocol:   ssh
+
+protocol:       udp ssh # (tcp?)
+
+chain:          first [filters] last
+
+first:          receiver getter # (folder?)
+
+last:           sender # (folder?)
+
+filters:        filter filters
+
+folder:
+    has:        path folderType
+    canHave:    fileTransition
+
+filter:
+    includes:   processInfo
+    has:        in out err
+    canHave:    canExecs
+
+canExecs:       canExec canExecs
+
+canExec:
+    includes:   processInfo
+
+in:
+    includes:   folder
+
+out:
+    includes:   folder
+
+err:
+    includes:   folder
+
+admin:
+    includes:   processInfo
+
+auth:
+    includes:   processInfo
+
+processInfo:
+    has:        processType startedBy
+
+startedBy:      user system process
+
+user:
+    has:        role
+    canHave:    processTransition
+
+system:
+    has:        initTransition
+
+fileTransition: <automaticallyDerived>
+initTransition: <automaticallyDerived>
+processTransition:      <derived>
+
+port:           <terminal:???>
+interfaceType:  <terminal:type>
+path:           <terminal:path>
+processType:    <terminal:type>
+role:           <terminal:role>
