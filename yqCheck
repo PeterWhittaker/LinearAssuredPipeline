@@ -1,0 +1,15 @@
+#!/bin/bash
+[[ -z $1 ]] && { echo "Need an argument. Exiting."; exit 1; }
+set -u
+theFile="$1"
+tmpFile=/tmp/yqThis_$$
+trap "rm -f $tmpFile" EXIT
+
+yq r "$theFile" > "$tmpFile"
+if diff -Bw "$theFile" "$tmpFile"; then
+    echo "'${theFile}' checks out"
+    exit 0
+else
+    echo "'${theFile}' needs work"
+    exit 1
+fi
