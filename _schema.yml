@@ -37,9 +37,18 @@ networkAgentCommon:
 # I'd rather do this, but it is messier than I thought
 # protocol: enum('tcp', 'udp', 'ssh') # protocol varies by agent
 
-# this is a list, not an enum - but a list as a sequence
-# is there always a filter?
-pipeline:          enum(entry [filters] exit) # still working on this
+# this is a list, but a list as a sequence
+# is there always a filter? no, not necessarily
+# entry and exit are always required, so create a subtype
+# that forces them, while allowing filters to be optional
+# This will at least get my schema validated, but will not enforce order
+pipeline: list('pipeElement', min=2)
+
+# This will at least get my schema validated, but will not enforce order
+pipelineElement:
+  custom: include('entry')
+  custom: include('filters', required=False)
+  custom: include('exit')
  
 entry: # one of these is required, how to enforce?
   custom: include('receiver', required=False)
@@ -49,7 +58,9 @@ exit: # probably always a sender, but maybe a folder, maybe
   custom: include('sender') # required=False
   # custom: include('folder', required=False)
 
-filters: list(include('filter'))
+# hmm, if we use filters, there must be at least one,
+# but filters are optional - cf pipelineElement above
+filters: list(include('filter'), min=1)
 
 folder:
     custom:    include('path')
