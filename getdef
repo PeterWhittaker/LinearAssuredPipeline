@@ -1,0 +1,20 @@
+#!/bin/bash
+
+# Searches the current directory for either all SELinux macro definitions or
+# the SELinux macro definition specified by $1
+#
+# if $2 exists, there is a quoting error and we quit
+
+if [[ ! -z ${2} ]]; then
+    echo "ERROR: invoked with too many parameters, probably a quoting error."
+    echo "USAGE: $0 [pattern]"
+    exit 1    
+fi
+
+pattern='define(`'
+if [[ -z $1 ]]; then
+    find . -type f -exec grep -i -H "${pattern}" {} \; | cut -d: -f1 |sort -u
+else
+    pattern="${pattern}${1}"
+    find . -type f -exec grep -i -H "${pattern}" {} \;
+fi
