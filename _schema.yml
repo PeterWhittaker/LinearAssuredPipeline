@@ -38,6 +38,8 @@ pipeline: list('pipeElement', min=2)
 
 # This will at least get my schema validated, but will not enforce order
 pipelineElement:
+  name: str()
+  description: str(required=False)
   custom: include('entry')
   custom: include('filters', required=False)
   custom: include('exit')
@@ -86,6 +88,8 @@ auth:
   custom:       include('processInfo')
 
 processInfo:
+  name: str()
+  description: str(required=False)
   custom:       include('processType')
   custom:       include('startedBy')
 
