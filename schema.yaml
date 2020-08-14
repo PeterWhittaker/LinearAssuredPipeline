@@ -5,28 +5,29 @@ processes: list(include('process'), min=1)
 process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
 
 receiver:
-  custom: include('networkAgentCommon')
+  common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
-  # custom: include('protocol')
+  # protocol: include('protocol')
   protocol: enum('udp')
-  custom: include('port')
+  port: include('port')
 
 sender:
-  custom: include('networkAgentCommon')
+  common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
-  # custom: include('protocol')
+  # protocol: include('protocol')
   protocol: enum('udp','ssh')
 
 getter:
-  custom: include('networkAgentCommon')
+  common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
-  # custom: include('protocol')
+  # protocol: include('protocol')
   protocol: enum('ssh')
 
 networkAgentCommon:
-  custom: include('interfaceType')
-  custom: include('processInfo')
-  custom: include('folder')
+  interfaceType: include('interfaceType')
+  processInfo: include('processInfo')
+  # read or write, depending whether entry or exit
+  folder: include('folder')
 
 # I'd rather do this, but it is messier than I thought
 # protocol: enum('tcp', 'udp', 'ssh') # protocol varies by agent
@@ -36,73 +37,64 @@ networkAgentCommon:
 # entry and exit are always required, so create a subtype
 # that forces them, while allowing filters to be optional
 # This will at least get my schema validated, but will not enforce order
-pipeline: list('pipelineElement', min=2)
+pipeline:
+  entry: include('entry')
+  filters: list(include('filter'), required=False)
+  exit: include('exit')
 
-# This will at least get my schema validated, but will not enforce order
-pipelineElement:
-  name: str()
-  description: str(required=False)
-  custom: include('entry')
-  custom: include('filters', required=False)
-  custom: include('exit')
- 
 entry: any(include('receiver'), include('getter'))
 
 # Probably only ever a sender, but maybe folders? TBD...
 exit: any(include('sender'))
-#exit: any(include('sender'), include('folder'))
+  #type: any(include('sender'), include('folder'))
 
+# no longer sure about this....
 # hmm, if we use filters, there must be at least one,
 # but filters are optional - cf pipelineElement above
-filters: list(include('filter'), min=1)
+#filters: list(include('filter'), min=1)
 
 folder:
-    custom:    include('path')
-    custom:    include('folderType')
-    custom:    include('fileTransition', required=False)
+  path:    include('path')
+  folderType:    include('folderType')
+  fileTransition:    include('fileTransition', required=False)
 
 filter:
   order:  int() # specify this manually - use this in the generation code....
-  custom: include('processInfo')
-  custom: include('in')
-  custom: include('out')
-  custom: include('err')
-  custom: include('canExecs', required=False)
+  processInfo: include('processInfo')
+  in: include('in')
+  out: include('out')
+  err: include('err')
+  canExecs: include('canExecs', required=False)
 
 canExecs: list(include('canExec'))
 
 canExec:
-  custom: include('processInfo')
+  processInfo: include('processInfo')
 
-in:
-  custom:       include('folder')
+in: include('folder')
 
-out:
-  custom:       include('folder')
+out: include('folder')
 
-err:
-  custom:       include('folder')
+err: include('folder')
 
-admin:
-  custom:       include('processInfo')
+admin: include('processInfo')
 
-auth:
-  custom:       include('processInfo')
+auth: include('processInfo')
 
 processInfo:
   name: str()
   description: str(required=False)
-  custom:       include('processType')
-  custom:       include('startedBy')
+  processType:       include('processType')
+  startedBy:       include('startedBy')
 
 startedBy: any(include('user'), include('system'), include('process'))
 
 user:
-  custom: include('role')
-  custom: include('processTransition', required=False)
+  userRole: include('role')
+  processTransition: include('processTransition', required=False)
 
 system:
-  custom: include('initTtransition')
+  systemTransition: include('initTransition')
 
 # primitives/terminals to be validated
 fileTransition:    str() # for now
