@@ -1,0 +1,61 @@
+#!/usr/bin/env bash
+
+# add new tests here
+ALLTESTS="pipelineTest"
+target=${1:-all}
+set -u
+
+finalRC=0 # assume all will be well
+template=schemaTemplate.yaml
+
+myDir=$(dirname $0)
+cd $myDir || { echo "Cannot cd to '$myDir', exiting."; exit 1; }
+myDir=$(pwd)
+cd .. || { echo "Cannot cd to parent of '${myDir}', exiting."; exit 3; }
+myParent=$(pwd)
+cd $myDir || { echo "Cannot cd to '$myDir', exiting."; exit 5; }
+templatePath="${myParent}/${template}"
+[[ ! -r ${templatePath} ]] && { echo "Cannot find '${template}', exiting."; exit 7; }
+
+runTest () {
+    set +u
+    myTarget="${1}"
+    [[ -z ${myTarget} ]] && { echo "No target specified."; finalRC=11; return; }
+    set -u
+    testFile="${myTarget}.yml"
+    testSchema="${myTarget}_schema.yaml"
+    [[ ! -r "${testFile}" ]] && { echo "Cannot find '${testFile}'."; finalRC=13; return; }
+
+    cat << EOM > ${testSchema}
+pipelineTest: include('pipeline')
+---
+EOM
+    cat "${templatePath}" >> ${testSchema}
+    yamale -p ruamel -s "${testSchema}" "${testFile}"
+    case $? in
+        0)
+            echo "Test of '${myTarget}' succeeded."
+            ;;
+        *)
+            echo
+            echo "Test of '${myTarget}' failed. There should be many messages above."
+            ;;
+    esac
+}
+
+case $target in
+    all)
+        for test in ${ALLTESTS}; do
+            runTest $test
+        done
+        ;;
+    pipelineTest)
+        runTest $target
+        ;;
+    *)
+        echo "Unrecognized target '${target}', exiting."
+        exit 9
+        ;;
+esac
+
+exit $finalRC

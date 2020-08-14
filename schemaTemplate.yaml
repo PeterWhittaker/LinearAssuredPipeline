@@ -1,5 +1,3 @@
-pipelineTest: include('pipeline')
----
 processes: list(include('process'), min=1)
 
 process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))

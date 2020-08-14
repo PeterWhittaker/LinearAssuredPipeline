@@ -1,0 +1,35 @@
+#!/usr/bin/env bash
+
+template=schemaTemplate.yaml
+
+myDir=$(dirname $0)
+cd $myDir || { echo "Cannot cd to '$myDir', exiting."; exit 1; }
+myDir=$(pwd)
+cd .. || { echo "Cannot cd to parent of '${myDir}', exiting."; exit 3; }
+myParent=$(pwd)
+cd $myDir || { echo "Cannot cd to '$myDir', exiting."; exit 5; }
+templatePath="${myParent}/${template}"
+[[ ! -r ${templatePath} ]] && { echo "Cannot find '${template}', exiting."; exit 7; }
+
+if [[ -z $1 ]]; then
+    echo "No argument supplied to '$0', defaulting to '${template}'."
+    theFile=${templatePath}
+else
+    theFile="$1"
+fi
+
+set -u
+
+[[ ! -r "${theFile}" ]] && { echo "Cannot locate '${theFile}', exiting."; exit 1; }
+
+tmpFile=/tmp/yqThis_$$
+trap "rm -f $tmpFile" EXIT
+
+yq r "$theFile" > "$tmpFile"
+if diff -Bw "$theFile" "$tmpFile"; then
+    echo "'${theFile}' checks out"
+    exit 0
+else
+    echo "'${theFile}' needs work"
+    exit 1
+fi

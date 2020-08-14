@@ -1,3 +1,5 @@
+TOP := $(dir $(firstword $(MAKEFILE_LIST)))
+
 # backwards, but given the problem below, I cannot figure different
 PACKAGES := strictyaml yamale ruamel.yaml # ruamel has its own dependencies, see targets
 
@@ -30,11 +32,17 @@ endif
 #
 #####
 
-all:
+all: yqcheck
 ifeq ($(EXECMISSING),true)
 	$(error Missing executables )
 endif
-	@echo nothing to do yet
+	@$(TOP)/tests/runTests all
+
+clean:
+	@rm -f $(TOP)/tests/*schema.yaml
+
+yqcheck:
+	@$(TOP)/tests/yqCheck
 
 check: checkBins checkPkgs
 
