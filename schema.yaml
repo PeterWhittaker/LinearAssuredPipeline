@@ -1,4 +1,6 @@
-processes: list(include('process'), min=1))
+pipelineTest: include('pipeline')
+---
+processes: list(include('process'), min=1)
 
 process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
 
@@ -34,7 +36,7 @@ networkAgentCommon:
 # entry and exit are always required, so create a subtype
 # that forces them, while allowing filters to be optional
 # This will at least get my schema validated, but will not enforce order
-pipeline: list('pipeElement', min=2)
+pipeline: list('pipelineElement', min=2)
 
 # This will at least get my schema validated, but will not enforce order
 pipelineElement:

@@ -1,5 +1,8 @@
-processes: 'chain'
-
-chain:
-  - getter
-  - antiVirus
+pipelineTest:
+  - entry:
+      name: 'fred'
+  - filter:
+      name: 'antivirus'
+      order: 1
+      #  - exit:
+      #name: 'alice'
