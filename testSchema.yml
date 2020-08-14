@@ -1,8 +1,42 @@
 pipelineTest:
-  - entry:
-      name: 'fred'
-  - filter:
-      name: 'antivirus'
-      order: 1
-      #  - exit:
-      #name: 'alice'
+  entry:
+    protocol: 'ssh'
+    common:
+      interfaceType: 'lowInterface'
+      folder: # writes to
+        path: '/a/path/it/writes to'
+        folderType: 'an SELinux type'
+      processInfo:
+        name: 'my SSH getter'
+        processType: 'mySSHprocessType'
+        startedBy:
+          userRole: 'userrole'
+
+  filters:
+    - order: 1
+      processInfo:
+        name: 'antivirus'
+        processType: 'antivirusType'
+        startedBy:
+          systemTransition: 'transition from init to something'
+      in:
+        path: 'yet another path in'
+        folderType: 'yet another SELinux type in'
+      out:
+        path: 'yet another path out'
+        folderType: 'yet another SELinux type out'
+      err:
+        path: 'yet another path err'
+        folderType: 'yet another SELinux type err'
+  exit:
+    protocol: 'udp'
+    common:
+      interfaceType: 'highInterface'
+      folder: # reads from
+        path: '/another/path'
+        folderType: 'another SELinux type'
+      processInfo:
+        name: 'my UDP putter'
+        processType: 'myPutterType'
+        startedBy:
+          systemTransition: 'transition from init to something'
