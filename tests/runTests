@@ -39,6 +39,7 @@ EOM
         *)
             echo
             echo "Test of '${myTarget}' failed. There should be many messages above."
+            finalRC=17
             ;;
     esac
 }
