@@ -14,21 +14,38 @@ pipelineTest:
           userRole: 'userrole'
 
   filters:
-    - order: 1
-      processInfo:
-        name: 'antivirus'
-        processType: 'antivirusType'
-        startedBy:
-          systemTransition: 'transition from init to something'
-      in:
-        path: 'yet another path in'
-        folderType: 'yet another SELinux type in'
-      out:
-        path: 'yet another path out'
-        folderType: 'yet another SELinux type out'
-      err:
-        path: 'yet another path err'
-        folderType: 'yet another SELinux type err'
+    - filter:
+        order: 1
+        processInfo:
+          name: 'antivirus'
+          processType: 'antivirusType'
+          startedBy:
+            systemTransition: 'transition from init to something'
+        in:
+          path: 'yet another path in'
+          folderType: 'yet another SELinux type in'
+        out:
+          path: 'yet another path out'
+          folderType: 'yet another SELinux type out'
+        err:
+          path: 'yet another path err'
+          folderType: 'yet another SELinux type err'
+    - filter:
+        order: 2
+        processInfo:
+          name: 'antivirus'
+          processType: 'antivirusType'
+          startedBy:
+            systemTransition: 'transition from init to something'
+        in:
+          path: 'yet another path in'
+          folderType: 'yet another SELinux type in'
+        out:
+          path: 'yet another path out'
+          folderType: 'yet another SELinux type out'
+        err:
+          path: 'yet another path err'
+          folderType: 'yet another SELinux type err'
   exit:
     type: 'sender'
     protocol: 'udp'

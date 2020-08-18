@@ -10,10 +10,13 @@
 # 
 pipeline:
   entry: include('entry')
-  filters: list(include('filter'), required=False)
+  filters: list(include('filters'), required=False)
   exit: include('exit')
 
 entry: any(include('receiver'), include('getter'))
+
+filters:
+  filter: include('filter')
 
 # Probably only ever a sender, but maybe folders? TBD...
 exit: any(include('sender'))
