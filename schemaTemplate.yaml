@@ -1,9 +1,26 @@
-processes: list(include('process'), min=1)
+# Pipeline is a sequence of entry, zero or more filters, and exit,
+# but yamale - and YAML - lacks a method of forcing sequence order.
+# Therefore,
+#   - have three required elements in the map, entry, filters, exit
+#   - inclusion of filters is optional; if included, their order is
+#     defined by an 'order' number, which may be overkill, since it
+#     should be possible to link them via the 'out folder' types
+#   - have code know about the sequence and "do the right thing",
+#     mapping from n-1's types to n's, etc.
+# 
+pipeline:
+  entry: include('entry')
+  filters: list(include('filter'), required=False)
+  exit: include('exit')
 
-process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
+entry: any(include('receiver'), include('getter'))
+
+# Probably only ever a sender, but maybe folders? TBD...
+exit: any(include('sender'))
+  #type: any(include('sender'), include('folder'))
 
 receiver:
-  type: regex('receiver')
+  type: regex('receiver') # regex forces specific string; str() does not
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
@@ -11,14 +28,14 @@ receiver:
   port: include('port')
 
 sender:
-  type: regex('sender')
+  type: regex('sender') # regex forces specific string; str() does not
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
   protocol: enum('udp','ssh')
 
 getter:
-  type: regex('getter')
+  type: regex('getter') # regex forces specific string; str() does not
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
@@ -33,36 +50,10 @@ networkAgentCommon:
 # I'd rather do this, but it is messier than I thought
 # protocol: enum('tcp', 'udp', 'ssh') # protocol varies by agent
 
-# this is a list, but a list as a sequence
-# is there always a filter? no, not necessarily
-# entry and exit are always required, so create a subtype
-# that forces them, while allowing filters to be optional
-# This will at least get my schema validated, but will not enforce order
-pipeline:
-  entry: include('entry')
-  filters: list(include('filter'), required=False)
-  exit: include('exit')
-
-entry: any(include('receiver'), include('getter'))
-
-# Probably only ever a sender, but maybe folders? TBD...
-exit: any(include('sender'))
-  #type: any(include('sender'), include('folder'))
-
-# no longer sure about this....
-# hmm, if we use filters, there must be at least one,
-# but filters are optional - cf pipelineElement above
-#filters: list(include('filter'), min=1)
-
-folder:
-  path:    include('path')
-  folderType:    include('folderType')
-  fileTransition:    include('fileTransition', required=False)
-
 filter:
   order:  int() # specify this manually - use this in the generation code....
   processInfo: include('processInfo')
-  in: include('in')
+  in: include('in') # is in really necessary? Or is n-1's out?
   out: include('out')
   err: include('err')
   canExecs: include('canExecs', required=False)
@@ -72,6 +63,7 @@ canExecs: list(include('canExec'))
 canExec:
   processInfo: include('processInfo')
 
+# is in really necessary? Or is n-1's out?
 in: include('folder')
 
 out: include('folder')
@@ -81,6 +73,11 @@ err: include('folder')
 admin: include('processInfo')
 
 auth: include('processInfo')
+
+folder:
+  path:    include('path')
+  folderType:    include('folderType')
+  fileTransition:    include('fileTransition', required=False)
 
 processInfo:
   name: str()
@@ -96,6 +93,11 @@ user:
 
 system:
   systemTransition: include('initTransition')
+
+process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
+
+# this is for later, when we use this scheme more generically
+processes: list(include('process'), min=1)
 
 # primitives/terminals to be validated
 fileTransition:    str() # for now
