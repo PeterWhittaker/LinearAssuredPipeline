@@ -1,5 +1,6 @@
 pipelineTest:
   entry:
+    type: 'getter'
     protocol: 'ssh'
     common:
       interfaceType: 'lowInterface'
@@ -29,6 +30,7 @@ pipelineTest:
         path: 'yet another path err'
         folderType: 'yet another SELinux type err'
   exit:
+    type: 'sender'
     protocol: 'udp'
     common:
       interfaceType: 'highInterface'
