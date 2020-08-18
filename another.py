@@ -28,7 +28,7 @@ def extractPipeline(name, pipeline):
     print()
 
     for myFilter in myFilters:
-        myFilterObj = filterFactory(myFilter['filter'])
+        myFilterObj = filterFactory(myFilter)
         print(myFilterObj.getMsg)
         myFilterObj.cycleThrough()
         print()
