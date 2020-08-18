@@ -3,6 +3,7 @@ processes: list(include('process'), min=1)
 process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
 
 receiver:
+  type: regex('receiver')
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
@@ -10,12 +11,14 @@ receiver:
   port: include('port')
 
 sender:
+  type: regex('sender')
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
   protocol: enum('udp','ssh')
 
 getter:
+  type: regex('getter')
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
