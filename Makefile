@@ -40,6 +40,7 @@ endif
 
 clean:
 	@rm -f $(TOP)/tests/*schema.yaml
+	@rm -rf $(TOP)/pipeline/*/__pycache__
 
 yqcheck:
 	@$(TOP)/tests/yqCheck
