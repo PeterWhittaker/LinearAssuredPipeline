@@ -41,7 +41,13 @@ class Receiver(Entry):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
         self.message = 'This receiver does nothing yet.'
-        self.myDict.setdefault('port', anEndpoint['port'])
+        try:
+            thePort = anEndpoint['port']
+        except:
+            raise TypeError('Receiver expects a port, was missing from YAML file')
+        if not isinstance(thePort, int):
+            raise TypeError('Value for "port" in YAML was not of type "int"')
+        self.myDict.setdefault('port', thePort)
 
 class Getter(Entry):
     def __init__(self, anEndpoint):
