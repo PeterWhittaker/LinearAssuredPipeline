@@ -22,17 +22,38 @@ def extractPipeline(name, pipeline):
     myEntryObj.cycleThrough()
     print()
 
+    filterList = {}
+    for myFilter in myFilters:
+        myFilterObj = filterFactory(myFilter)
+        filterList.setdefault(myFilterObj.order, myFilterObj)
+
+    numFilters = len(filterList)
+    print('%s filters' % numFilters)
+    try:
+        for i in range(numFilters):
+            key = i+1
+            try:
+                order = filterList[key]
+            except:
+                print('Could not find filter#%s, is the list monotonic starting at 1?' % key)
+                raise ValueError()
+            else:
+                print(filterList[key].getMsg)
+                filterList[key].cycleThrough()
+                print()
+    except ValueError:
+            keys = ''
+            for i in sorted (filterList.keys()):
+                if not keys == '':
+                    keys += ', '
+                keys += '%i' % i
+            print('Filter "order" values are "%s".' % keys)
+            print('Filter "order" must start at "1" and increase monotonically by 1.')
+            print()
+
     myExitObj = endpointFactory(myExit)
     print(myExitObj.getMsg)
     myExitObj.cycleThrough()
     print()
-
-    for myFilter in myFilters:
-        myFilterObj = filterFactory(myFilter)
-        print(myFilterObj.getMsg)
-        myFilterObj.cycleThrough()
-        print()
-    #myBogusObj = endpointFactory({'type': 'fred'})
-    #myBogusObj = endpointFactory(myEntry, 'type')
 
 extractPipeline('pipelineTest', myObj)

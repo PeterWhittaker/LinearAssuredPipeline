@@ -23,6 +23,23 @@ class Filter(object):
                 for key, value in self.myDict[self.startdby].items():
                     print(key, value)
 
+    def validateNext(self, nextFilter):
+        try:
+            nextOne = nextFilter.order
+        except:
+            raise TypeError('validateNext(): was passed something other than a valid filter.')
+
+        if not isinstance(nextOne, int):
+            raise TypeError('validateNext(): "order" is not an integer.')
+
+        expectedOrder = self.order + 1
+        if not expectedOrder == nextOne:
+            raise ValueError('validateNext(): filter passed is not next in line; expected "%s", got "%s".' %s (expectedOrder, nextOne))
+
+    @property
+    def order(self):
+        return self.myDict['order']
+
     @property
     def getMsg(self):
         return self.message
