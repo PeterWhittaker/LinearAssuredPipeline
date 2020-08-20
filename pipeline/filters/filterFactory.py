@@ -69,22 +69,23 @@ def filterFactory(myFilters):
             try:
                 order = filterList[key]
             except:
-                print('Could not find filter#%s, is the list monotonic starting at 1?' % key)
-                raise ValueError()
+                raise ValueError('Could not find filter#%s, is the list monotonic starting at 1?' % key)
     except ValueError:
         keys = ''
         for i in sorted (filterList.keys()):
             if not keys == '':
                 keys += ', '
             keys += '%i' % i
-        print('Filter "order" values are "%s".' % keys)
-        print('Filter "order" must start at "1" and increase monotonically by 1.')
-        print()
-        raise ValueError('Unable to initialize the filter list: non-monotonic orders.')
-    except:
-        print('Unknown exception initializing the filter list.')
+        message1 = 'Unable to initialize the filter list: non-monotonic orders.\n'
+        message2 = 'Filter "order" must start at "1" and increase monotonically by 1.\n'
+        message3 = 'Filter "order" values are "%s".' % keys
+        message = message1 + message2 + message3
+        raise ValueError(message)
+    except Exception as err:
+        print('Unknown exception initializing the filter list: %s' % err)
     else:
         return filterList
     # if we get here, we were unable to return the actual list
+    # and we should NEVER be able to get here....
     return ''
 

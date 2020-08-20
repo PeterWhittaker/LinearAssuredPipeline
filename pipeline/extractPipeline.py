@@ -35,37 +35,37 @@ def extractPipeline(pipeline):
 
     try:
         myEntry = pipeline['entry']
-    except:
-        raise ValueError('Unable to extract entry element from pipeline.')
+    except Exception as err:
+        raise ValueError('Unable to extract entry element from pipeline: "%s"' % err)
         
     try:
         myFilters = pipeline['filters']
-    except:
-        raise ValueError('Unable to extract filter element(s) from pipeline.')
+    except Exception as err:
+        raise ValueError('Unable to extract filter element(s) from pipeline: "%s"' % err)
         
     try:
         myExit = pipeline['exit']
-    except:
-        raise ValueError('Unable to extract exit element from pipeline.')
+    except Exception as err:
+        raise ValueError('Unable to extract exit element from pipeline: "%s"' % err)
         
     try:
         myEntryObj = endpointFactory(myEntry)
-    except:
-        raise ValueError('Unable to convert "entry" element to endpoint object.')
+    except Exception as err:
+        raise ValueError('Unable to convert "entry" element to endpoint object: "%s"' % err)
     else:
         extractedPipeline.setdefault('entry', myEntryObj)
 
     try:
         myFilterList = filterFactory(myFilters)
-    except:
-        raise ValueError('Unable to convert "filter" element(s) to filter list.')
+    except Exception as err:
+        raise ValueError('Unable to convert "filter" element(s) to filter list: "%s"' % err)
     else:
         extractedPipeline.setdefault('filters', myFilterList)
 
     try:
         myExitObj = endpointFactory(myExit)
-    except:
-        raise ValueError('Unable to convert "exit" element to endpoint object.')
+    except Exception as err:
+        raise ValueError('Unable to convert "exit" element to endpoint object: "%s"' % err)
     else:
         extractedPipeline.setdefault('exit', myExitObj)
 
