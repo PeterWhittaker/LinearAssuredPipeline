@@ -13,47 +13,48 @@ myFile = io.open(filename, 'r')
 myObj = myYaml.load(myFile)
 
 def extractPipeline(name, pipeline):
-    myEntry   = pipeline[name]['entry']
-    myExit    = pipeline[name]['exit']
-    myFilters = pipeline[name]['filters']
-
-    myEntryObj = endpointFactory(myEntry)
-    print(myEntryObj.getMsg)
-    myEntryObj.cycleThrough()
-    print()
-
-    filterList = {}
-    for myFilter in myFilters:
-        myFilterObj = filterFactory(myFilter)
-        filterList.setdefault(myFilterObj.order, myFilterObj)
-
-    numFilters = len(filterList)
-    print('%s filters' % numFilters)
     try:
-        for i in range(numFilters):
-            key = i+1
-            try:
-                order = filterList[key]
-            except:
-                print('Could not find filter#%s, is the list monotonic starting at 1?' % key)
-                raise ValueError()
-            else:
-                print(filterList[key].getMsg)
-                filterList[key].cycleThrough()
-                print()
-    except ValueError:
-            keys = ''
-            for i in sorted (filterList.keys()):
-                if not keys == '':
-                    keys += ', '
-                keys += '%i' % i
-            print('Filter "order" values are "%s".' % keys)
-            print('Filter "order" must start at "1" and increase monotonically by 1.')
-            print()
+        myEntry   = pipeline[name]['entry']
+        myExit    = pipeline[name]['exit']
+        myFilters = pipeline[name]['filters']
+    except:
+        print('Unable to extract elements from pipeline.')
+        print()
+        return
 
-    myExitObj = endpointFactory(myExit)
-    print(myExitObj.getMsg)
-    myExitObj.cycleThrough()
-    print()
+    try:
+        myEntryObj = endpointFactory(myEntry)
+    except:
+        print('Unable to convert "entry" element to endpoint object.')
+        print()
+        return
+    else:
+        print(myEntryObj.getMsg)
+        myEntryObj.cycleThrough()
+        print()
+
+    try:
+        myFilterList = filterFactory(myFilters)
+    except:
+        print('Unable to convert "filter" element(s) to filter list.')
+        print()
+    else:
+        numFilters = len(myFilterList)
+        print('%s filters' % numFilters)
+        for i in range(numFilters):
+            key = i + 1
+            print(myFilterList[key].getMsg)
+            myFilterList[key].cycleThrough()
+            print()
+    try:
+        myExitObj = endpointFactory(myExit)
+    except:
+        print('Unable to convert "exit" element to endpoint object.')
+        print()
+        return
+    else:
+        print(myExitObj.getMsg)
+        myExitObj.cycleThrough()
+        print()
 
 extractPipeline('pipelineTest', myObj)

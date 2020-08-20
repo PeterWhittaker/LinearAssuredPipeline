@@ -44,7 +44,7 @@ class Filter(object):
     def getMsg(self):
         return self.message
 
-def filterFactory(aFilter):
+def _filterFactory(aFilter):
     try:
         order = aFilter['order']
     except:
@@ -55,4 +55,36 @@ def filterFactory(aFilter):
 
     myObj = Filter(aFilter)
     return myObj
+
+def filterFactory(myFilters):
+    filterList = {}
+    for myFilter in myFilters:
+        myFilterObj = _filterFactory(myFilter)
+        filterList.setdefault(myFilterObj.order, myFilterObj)
+
+    numFilters = len(filterList)
+    try:
+        for i in range(numFilters):
+            key = i+1 # lists start at 0, filters at 1
+            try:
+                order = filterList[key]
+            except:
+                print('Could not find filter#%s, is the list monotonic starting at 1?' % key)
+                raise ValueError()
+    except ValueError:
+        keys = ''
+        for i in sorted (filterList.keys()):
+            if not keys == '':
+                keys += ', '
+            keys += '%i' % i
+        print('Filter "order" values are "%s".' % keys)
+        print('Filter "order" must start at "1" and increase monotonically by 1.')
+        print()
+        raise ValueError('Unable to initialize the filter list: non-monotonic orders.')
+    except:
+        print('Unknown exception initializing the filter list.')
+    else:
+        return filterList
+    # if we get here, we were unable to return the actual list
+    return ''
 
