@@ -1,48 +1,74 @@
 from pipeline.endpoint.endpointFactory import endpointFactory
 from pipeline.filters.filterFactory import filterFactory
 
-def extractPipeline(name, pipeline):
-    try:
-        myEntry   = pipeline[name]['entry']
-        myExit    = pipeline[name]['exit']
-        myFilters = pipeline[name]['filters']
-    except:
-        print('Unable to extract elements from pipeline.')
-        print()
-        return
+def _viewEntry(myEntryObj):
+    print(myEntryObj.getMsg)
+    myEntryObj.cycleThrough()
+    print()
 
+def _viewExit(myExitObj):
+    print(myExitObj.getMsg)
+    myExitObj.cycleThrough()
+    print()
+
+def _viewFilters(myFilterList):
+    numFilters = len(myFilterList)
+    print('%s filters' % numFilters)
+    for i in range(numFilters):
+        key = i + 1
+        print(myFilterList[key].getMsg)
+        myFilterList[key].cycleThrough()
+        print()
+
+def viewPipeline(pipeline):
+    entryObj   = pipeline['entry']
+    filterList = pipeline['filters']
+    exitObj    = pipeline['exit']
+
+    _viewEntry(entryObj)
+    _viewFilters(filterList)
+    _viewExit(exitObj)
+
+def extractPipeline(pipeline):
+
+    extractedPipeline = {}
+
+    try:
+        myEntry = pipeline['entry']
+    except:
+        raise ValueError('Unable to extract entry element from pipeline.')
+        
+    try:
+        myFilters = pipeline['filters']
+    except:
+        raise ValueError('Unable to extract filter element(s) from pipeline.')
+        
+    try:
+        myExit = pipeline['exit']
+    except:
+        raise ValueError('Unable to extract exit element from pipeline.')
+        
     try:
         myEntryObj = endpointFactory(myEntry)
     except:
-        print('Unable to convert "entry" element to endpoint object.')
-        print()
-        return
+        raise ValueError('Unable to convert "entry" element to endpoint object.')
     else:
-        print(myEntryObj.getMsg)
-        myEntryObj.cycleThrough()
-        print()
+        extractedPipeline.setdefault('entry', myEntryObj)
 
     try:
         myFilterList = filterFactory(myFilters)
     except:
-        print('Unable to convert "filter" element(s) to filter list.')
-        print()
+        raise ValueError('Unable to convert "filter" element(s) to filter list.')
     else:
-        numFilters = len(myFilterList)
-        print('%s filters' % numFilters)
-        for i in range(numFilters):
-            key = i + 1
-            print(myFilterList[key].getMsg)
-            myFilterList[key].cycleThrough()
-            print()
+        extractedPipeline.setdefault('filters', myFilterList)
+
     try:
         myExitObj = endpointFactory(myExit)
     except:
-        print('Unable to convert "exit" element to endpoint object.')
-        print()
-        return
+        raise ValueError('Unable to convert "exit" element to endpoint object.')
     else:
-        print(myExitObj.getMsg)
-        myExitObj.cycleThrough()
-        print()
+        extractedPipeline.setdefault('exit', myExitObj)
+
+    # we only get here if the pipeline is good
+    return extractedPipeline
 
