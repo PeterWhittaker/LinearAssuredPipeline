@@ -1,40 +1,29 @@
 #!/usr/bin/env python
-import io
 import sys
-from ruamel.yaml import YAML
+from pipeline.readPipelineFromFile import readPipelineFromFile
 from pipeline.extractPipeline import extractPipeline, viewPipeline
-
-myYaml = YAML()
 
 pipelineName = 'pipelineTest'
 filename = 'tests/pipelineTest.yml'
+
 try:
-    myFile = io.open(filename, 'r')
-except:
-    print('Unable to read from "%s". Exiting.' % filename)
+    myPipelineObject = readPipelineFromFile(pipelineName, filename)
+except Exception as err:
+    print('Unable to get "%s" from file "%s". Exiting.' % (pipelineName, filename))
+    print('    (Exception message was: "%s")' % err)
     sys.exit(1)
 
 try:
-    myObj = myYaml.load(myFile)
-except:
-    print('Unable to get YAML from "%s". Exiting.' % filename)
+    myPipeline = extractPipeline(myPipelineObject)
+except Exception as err:
+    print('Unable to encode "%s" for further processing. Exiting.' % pipelineName)
+    print('    (Exception message was: "%s")' % err)
     sys.exit(3)
 
 try:
-    myPipelineObject = myObj['pipelineTest']
-except:
-    print('No such pipeline "%s" in file "%s". Exiting.' % (pipelineName, filename))
+    viewPipeline(myPipeline)
+except Exception as err:
+    print('Unable to view pipeline details. Odd. Exiting.')
+    print('    (Exception message was: "%s")' % err)
     sys.exit(5)
-
-try:
-    myPipeline = extractPipeline(myPipelineObject)
-except:
-    print('Unable to encode "%s" for further processing. Exiting.' % pipelineName)
-    sys.exit(7)
-else:
-    try:
-        viewPipeline(myPipeline)
-    except:
-        print('Unable to view pipeline details. Odd. Exiting.')
-        sys.exit(9)
 
