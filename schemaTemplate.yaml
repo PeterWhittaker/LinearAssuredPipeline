@@ -53,7 +53,8 @@ networkAgentCommon:
 filter:
   order:  int() # specify this manually - use this in the generation code....
   processInfo: include('processInfo')
-  in: include('in') # the folders are necessary, for their paths (*fc); types can be generated
+  in: include('in', required=False) # get from entry or N-1
+  # the folders are necessary, for their paths (*fc); types can be generated
   out: include('out')
   err: include('err')
   canExecs: include('canExecs', required=False)
@@ -87,7 +88,7 @@ processInfo:
   name: str()
   path: include('path')   # executable path, for *fc, for transitions
   description: str(required=False)
-  processType:       include('processType')
+  processType:       include('processType', required=False) # auto-generate for now
   startedBy:       include('startedBy')
 
 startedBy: any(include('user'), include('system'), include('process'))
