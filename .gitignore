@@ -1,0 +1,4 @@
+# bring in .gitignore, easiest way to do the right thing across machines
+#.gitignore
+.*swp
+.*pyc
