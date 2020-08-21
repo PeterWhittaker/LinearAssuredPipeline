@@ -1,14 +1,14 @@
 pipelineTest:
   entry:
     type: 'getter'
+    folder: # writes to
+      path: '/a/path/entry/writesTo'
     protocol: 'ssh'
     common:
       interfaceType: 'lowInterface'
-      folder: # writes to
-        path: '/a/path/it/writes to'
       processInfo:
         name: 'my SSH getter'
-        processType: 'mySSHprocessType'
+        path: /opt/notReally/entryExec
         startedBy:
           userRole: 'userrole'
 
@@ -16,36 +16,30 @@ pipelineTest:
     - order: 1
       processInfo:
         name: 'antivirus'
-        processType: 'antivirusType'
+        path: /opt/notReally/filter1Exec
         startedBy:
           systemTransition: 'transition from init to something'
-      in:
-        path: 'yet another path in'
       out:
-        path: 'yet another path out'
+        path: '/a/path/filter1/writesTo'
       err:
-        path: 'yet another path err'
+        path: '/a/path/filter1/errsTo'
     - order: 2
       processInfo:
         name: 'antivirus'
-        processType: 'antivirusType'
+        path: /opt/notReally/filter1Exec
         startedBy:
           systemTransition: 'transition from init to something'
-      in:
-        path: 'yet another path in'
       out:
-        path: 'yet another path out'
+        path: '/a/path/filter2/writesTo'
       err:
-        path: 'yet another path err'
+        path: '/a/path/filter2/errsTo'
   exit:
     type: 'sender'
     protocol: 'udp'
     common:
       interfaceType: 'highInterface'
-      folder: # reads from
-        path: '/another/path'
       processInfo:
         name: 'my UDP putter'
-        processType: 'myPutterType'
+        path: /opt/notReally/exitExec
         startedBy:
           systemTransition: 'transition from init to something'

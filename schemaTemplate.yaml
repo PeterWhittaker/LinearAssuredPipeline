@@ -21,6 +21,9 @@ exit: any(include('sender'))
 
 receiver:
   type: regex('receiver') # regex forces specific string; str() does not
+  # this should be common between all entry types, but I cannot think of
+  # how to generalize without having an arbitrary placeholder in each one
+  folder: include('folder')
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
@@ -36,6 +39,9 @@ sender:
 
 getter:
   type: regex('getter') # regex forces specific string; str() does not
+  # this should be common between all entry types, but I cannot think of
+  # how to generalize without having an arbitrary placeholder in each one
+  folder: include('folder')
   common: include('networkAgentCommon')
   # I'd rather do this, but it is messier than I thought
   # protocol: include('protocol')
@@ -44,8 +50,9 @@ getter:
 networkAgentCommon:
   interfaceType: include('interfaceType')
   processInfo: include('processInfo')
-  # read or write, depending whether entry or exit
-  folder: include('folder')
+  # Move this to entry types - only needed there; N+1 gets it from N
+  # # read or write, depending whether entry or exit
+  # folder: include('folder')
 
 # I'd rather do this, but it is messier than I thought
 # protocol: enum('tcp', 'udp', 'ssh') # protocol varies by agent
