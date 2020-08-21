@@ -6,7 +6,6 @@ pipelineTest:
       interfaceType: 'lowInterface'
       folder: # writes to
         path: '/a/path/it/writes to'
-        folderType: 'an SELinux type'
       processInfo:
         name: 'my SSH getter'
         processType: 'mySSHprocessType'
@@ -22,13 +21,10 @@ pipelineTest:
           systemTransition: 'transition from init to something'
       in:
         path: 'yet another path in'
-        folderType: 'yet another SELinux type in'
       out:
         path: 'yet another path out'
-        folderType: 'yet another SELinux type out'
       err:
         path: 'yet another path err'
-        folderType: 'yet another SELinux type err'
     - order: 2
       processInfo:
         name: 'antivirus'
@@ -37,13 +33,10 @@ pipelineTest:
           systemTransition: 'transition from init to something'
       in:
         path: 'yet another path in'
-        folderType: 'yet another SELinux type in'
       out:
         path: 'yet another path out'
-        folderType: 'yet another SELinux type out'
       err:
         path: 'yet another path err'
-        folderType: 'yet another SELinux type err'
   exit:
     type: 'sender'
     protocol: 'udp'
@@ -51,7 +44,6 @@ pipelineTest:
       interfaceType: 'highInterface'
       folder: # reads from
         path: '/another/path'
-        folderType: 'another SELinux type'
       processInfo:
         name: 'my UDP putter'
         processType: 'myPutterType'

@@ -9,12 +9,15 @@ class Endpoint(object):
         procname = 'name'
         proctype = 'processType'
         self.startdby = 'startedBy'
+        # if this was replaced by a series of properties, we would have more
+        # control over raising NotImplementedError for parts not yet supported,
+        # e.g., folderTypes - for now we will autogenerate them
         self.myDict = {
             endpttyp: anEndpoint[endpttyp],
             protocol: anEndpoint[protocol],
             infctype: anEndpoint['common'][infctype],
             foldpath: anEndpoint['common']['folder'][foldpath],
-            foldtype: anEndpoint['common']['folder'][foldtype],
+            # foldtype: anEndpoint['common']['folder'][foldtype],
             procname: anEndpoint['common']['processInfo'][procname],
             proctype: anEndpoint['common']['processInfo'][proctype],
             self.startdby: anEndpoint['common']['processInfo'][self.startdby]

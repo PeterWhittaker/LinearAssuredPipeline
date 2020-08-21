@@ -2,17 +2,20 @@ class Filter(object):
     def __init__(self, aFilter):
         self.message = 'This filter does nothing yet.'
         self.startdby= 'startedBy'
+        # if this was replaced by a series of properties, we would have more
+        # control over raising NotImplementedError for parts not yet supported,
+        # e.g., folderTypes - for now we will autogenerate them
         self.myDict = {
             'order': aFilter['order'],
             'name': aFilter['processInfo']['name'],
             'processType': aFilter['processInfo']['processType'],
             self.startdby: aFilter['processInfo'][self.startdby],
             'inFolderPath':aFilter['in']['path'],
-            'inFolderType':aFilter['in']['folderType'],
+            #'inFolderType':aFilter['in']['folderType'],
             'outFolderPath':aFilter['out']['path'],
-            'outFolderType':aFilter['out']['folderType'],
-            'errFolderPath':aFilter['err']['path'],
-            'errFolderType':aFilter['err']['folderType']
+            #'outFolderType':aFilter['out']['folderType'],
+            'errFolderPath':aFilter['err']['path'] #,
+            #'errFolderType':aFilter['err']['folderType']
         }
 
     def cycleThrough(self):

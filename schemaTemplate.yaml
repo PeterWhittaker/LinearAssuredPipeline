@@ -53,7 +53,7 @@ networkAgentCommon:
 filter:
   order:  int() # specify this manually - use this in the generation code....
   processInfo: include('processInfo')
-  in: include('in') # is in really necessary? Or is n-1's out?
+  in: include('in') # the folders are necessary, for their paths (*fc); types can be generated
   out: include('out')
   err: include('err')
   canExecs: include('canExecs', required=False)
@@ -62,6 +62,10 @@ canExecs: list(include('canExec'))
 
 canExec:
   processInfo: include('processInfo')
+  # easiest way to define this, but we will ignore path, e.g., et al,
+  # if defining a canExec - we care mostly/only about processType
+  # maybe canExec is just a list of processTypes this can execute?
+  # or is it better to specify paths and derive processTypes? Hmm...
 
 # is in really necessary? Or is n-1's out?
 in: include('folder')
@@ -76,11 +80,12 @@ auth: include('processInfo')
 
 folder:
   path:    include('path')
-  folderType:    include('folderType')
+  folderType:    include('folderType', required=False) # autogenerate from elements N and N+1
   fileTransition:    include('fileTransition', required=False)
 
 processInfo:
   name: str()
+  path: include('path')   # executable path, for *fc, for transitions
   description: str(required=False)
   processType:       include('processType')
   startedBy:       include('startedBy')
@@ -91,24 +96,28 @@ user:
   userRole: include('role')
   processTransition: include('processTransition', required=False)
 
+# pretty sure this is going to be a placeholder - we will derive the
+# init transition - provided that the string exists, we go this way
 system:
   systemTransition: include('initTransition')
 
+# included but not currently supported - for later, when we use this more generally
 process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
 
-# this is for later, when we use this scheme more generically
+# this is for later, when we use this scheme more generally
 processes: list(include('process'), min=1)
 
+# many of these should be replaced by regex, e.g.
 # primitives/terminals to be validated
-fileTransition:    str() # for now
-initTransition:    str() # for now
-processTransition: str() # for now
+fileTransition:    str() # for now # regex
+initTransition:    str() # for now # regex # only used in system; cf comments thereupon
+processTransition: str() # for now # regex
 
 # fairly well understood primitives/terminals
 port:          int()
-interfaceType: str()  # the SELinux type for the interface
-path:          str()  # for now; likely
-role:          str()  # an SELinux role
-processType:   str()  # the actual SELinux type for the process
-folderType:    str()  # the actual SELinux type for the folder
+interfaceType: str()  # the SELinux type for the interface # regex
+path:          str()  # for now; likely # regex
+role:          str()  # an SELinux role # regex
+processType:   str()  # the actual SELinux type for the process # regex
+folderType:    str()  # the actual SELinux type for the folder # regex
 
