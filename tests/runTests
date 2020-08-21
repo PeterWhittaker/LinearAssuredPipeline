@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+type -a yamale > /dev/null 2>&1 || { echo "Cannot proceed: No yamale. Exiting."; exit 1; }
+
 # add new tests here
 ALLTESTS="pipelineTest"
 target=${1:-all}

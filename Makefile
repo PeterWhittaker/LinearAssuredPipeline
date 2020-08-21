@@ -12,6 +12,12 @@ WHICH := type -P	# as opposed to which
 EXECMISSING := false
 PIP	:= $(shell $(WHICH) pip)
 PYTHON	:= $(shell $(WHICH) python)
+YQ	:= $(shell $(WHICH) yq)
+
+ifndef YQ
+$(info Missing yq)
+EXECMISSING := true
+endif
 
 ifndef PIP
 $(info Missing pip)

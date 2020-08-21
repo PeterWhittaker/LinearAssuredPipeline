@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+type -a yq > /dev/null 2>&1 || { echo "Cannot proceed: No yq. Exiting."; exit 1; }
+
 template=schemaTemplate.yaml
 
 myDir=$(dirname $0)
