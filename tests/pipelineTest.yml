@@ -26,7 +26,7 @@ pipelineTest:
     - order: 2
       processInfo:
         name: 'antivirus'
-        path: /opt/notReally/filter1Exec
+        path: /opt/notReally/filter2Exec
         startedBy:
           systemTransition: 'transition from init to something'
       out:
