@@ -8,9 +8,10 @@ class Filter(object):
         self.myDict = {
             'order': aFilter['order'],
             'name': aFilter['processInfo']['name'],
-            'processType': aFilter['processInfo']['processType'],
+            #'processType': aFilter['processInfo']['processType'],
+            'procpath': aFilter['processInfo']['path'],
             self.startdby: aFilter['processInfo'][self.startdby],
-            'inFolderPath':aFilter['in']['path'],
+            #'inFolderPath':aFilter['in']['path'],
             #'inFolderType':aFilter['in']['folderType'],
             'outFolderPath':aFilter['out']['path'],
             #'outFolderType':aFilter['out']['folderType'],

@@ -4,10 +4,13 @@ class Endpoint(object):
         endpttyp = 'type'
         protocol = 'protocol'
         infctype = 'interfaceType'
-        foldpath = 'path'
-        foldtype = 'folderType'
+        # now only in entry objects
+        # foldpath = 'path'
+        # no longer used
+        # foldtype = 'folderType'
         procname = 'name'
-        proctype = 'processType'
+        procpath = 'procpath'
+        # proctype = 'processType'
         self.startdby = 'startedBy'
         # if this was replaced by a series of properties, we would have more
         # control over raising NotImplementedError for parts not yet supported,
@@ -16,10 +19,14 @@ class Endpoint(object):
             endpttyp: anEndpoint[endpttyp],
             protocol: anEndpoint[protocol],
             infctype: anEndpoint['common'][infctype],
-            foldpath: anEndpoint['common']['folder'][foldpath],
+            # now only in entry objects
+            # foldpath: anEndpoint['folder'][foldpath],
+            # no longer used
             # foldtype: anEndpoint['common']['folder'][foldtype],
             procname: anEndpoint['common']['processInfo'][procname],
-            proctype: anEndpoint['common']['processInfo'][proctype],
+            # NOTE: THIS ONE IS DIFFERENT!!! Need to fix this.
+            procpath: anEndpoint['common']['processInfo']['path'],
+            # proctype: anEndpoint['common']['processInfo'][proctype],
             self.startdby: anEndpoint['common']['processInfo'][self.startdby]
         }
 
@@ -38,6 +45,8 @@ class Endpoint(object):
 class Entry(Endpoint):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
+        foldpath = 'path'
+        self.myDict.setdefault('foldpath', anEndpoint['folder'][foldpath])
         self.message = 'This entry does nothing yet.'
 
 class Receiver(Entry):
