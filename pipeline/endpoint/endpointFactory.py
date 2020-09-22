@@ -1,6 +1,9 @@
+import logging
+
 class Endpoint(object):
     def __init__(self, anEndpoint):
         self.message = 'This does nothing yet.'
+        self.myLogger = logging.getLogger('Endpoint')
         endpttyp = 'type'
         protocol = 'protocol'
         infctype = 'interfaceType'
@@ -33,10 +36,10 @@ class Endpoint(object):
     def cycleThrough(self):
         for key, value in self.myDict.items():
             if key is not self.startdby:
-                print(key, value)
+                self.myLogger.info("%s%s" % (key, value))
             else:
                 for key, value in self.myDict[self.startdby].items():
-                    print(key, value)
+                    self.myLogger.info("%s%s" % (key, value))
 
     @property
     def getMsg(self):
@@ -80,7 +83,7 @@ def endpointFactory(myEndpoint):
     try:
         theType = myEndpoint['type']
     except:
-        raise TypeError('endpointFactory(): Invalid map or other data element passed as endpoint.')
+        raise TypeError("endpointFactory(): Invalid map or other data element passed as endpoint: 'type' is missing.")
 
     if  theType == 'receiver':
         myObj = Receiver(myEndpoint)

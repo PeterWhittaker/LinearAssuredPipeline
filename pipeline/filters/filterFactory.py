@@ -1,7 +1,10 @@
+import logging
+
 class Filter(object):
     def __init__(self, aFilter):
         self.message = 'This filter does nothing yet.'
         self.startdby= 'startedBy'
+        self.myLogger = logging.getLogger('ClassFilter')
         # if this was replaced by a series of properties, we would have more
         # control over raising NotImplementedError for parts not yet supported,
         # e.g., folderTypes - for now we will autogenerate them
@@ -22,10 +25,10 @@ class Filter(object):
     def cycleThrough(self):
         for key, value in self.myDict.items():
             if key is not self.startdby:
-                print(key, value)
+                self.myLogger.info("%s%s" % (key, value))
             else:
                 for key, value in self.myDict[self.startdby].items():
-                    print(key, value)
+                    self.myLogger.info("%s%s" % (key, value))
 
     def validateNext(self, nextFilter):
         try:
@@ -86,7 +89,7 @@ def filterFactory(myFilters):
         message = message1 + message2 + message3
         raise ValueError(message)
     except Exception as err:
-        print('Unknown exception initializing the filter list: %s' % err)
+        self.myLogger.warning('Unknown exception initializing the filter list: %s' % err)
     else:
         return filterList
     # if we get here, we were unable to return the actual list
