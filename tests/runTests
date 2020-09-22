@@ -3,7 +3,8 @@
 type -a yamale > /dev/null 2>&1 || { echo "Cannot proceed: No yamale. Exiting."; exit 1; }
 
 # add new tests here
-ALLTESTS="pipelineSingleFilter pipelineTwoFilters pipelineThreeFilters"
+ALLTESTS=" pipelineSingleFilter pipelineTwoFilters pipelineThreeFilters"
+
 target=${1:-all}
 set -u
 
@@ -21,8 +22,8 @@ cd $myDir || { echo "Cannot cd to '$myDir', exiting."; exit 5; }
 templatePath="${myParent}/${template}"
 [[ ! -r ${templatePath} ]] && { echo "Cannot find '${template}', exiting."; exit 7; }
 
-pipelineProcessorPath=${myParent}/processPipeline.py
-[[ ! -x ${pipelineProcessorPath} ]] && { echo "Cannot find '${pipelineProcessor}', exiting."; exit 91; }
+pipelineProcessorPath=${myParent}/${pipelineProcessor}
+[[ ! -x ${pipelineProcessorPath} ]] && { echo "Cannot fund '${pipelineProcessor}', exiting."; exit 91; }
 
 runTest () {
     set +u
@@ -34,7 +35,7 @@ runTest () {
     [[ ! -r "${testFile}" ]] && { echo "Cannot find '${testFile}'."; finalRC=13; return; }
 
     cat << EOM > ${testSchema}
-${myTarget}: include('pipeline')
+pipelineTest: include('pipeline')
 ---
 EOM
     cat "${templatePath}" >> ${testSchema}
@@ -50,14 +51,14 @@ EOM
             ;;
     esac
 
-    ${pipelineProcessorPath} --pipelinename "${myTarget}" --filename "${testFile}"
+    ${pipelineProcessorPath} --filename "${testFile}" --pipelinename "${myTarget}"
     case $? in
         0)
             echo "Pipeline validation of '${myTarget}' succeeded."
             ;;
         *)
             echo
-            echo "Pipeline validation of '${myTarget}' failed. There should be some messages above."
+            echo "Pipeline validation of '${myTarget}' failed. There should be many messages above."
             finalRC=19
             ;;
     esac

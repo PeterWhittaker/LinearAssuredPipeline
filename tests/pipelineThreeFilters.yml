@@ -1,4 +1,4 @@
-pipelineTwoFilters:
+pipelineThreeFilters:
   entry:
     type: 'getter'
     folder: # writes to
@@ -25,7 +25,7 @@ pipelineTwoFilters:
         path: '/a/path/filter1/errsTo'
     - order: 2
       processInfo:
-        name: 'antivirus'
+        name: 'xmlScan'
         path: /opt/notReally/filter2Exec
         startedBy:
           systemTransition: 'transition from init to something'
@@ -33,6 +33,17 @@ pipelineTwoFilters:
         path: '/a/path/filter2/writesTo'
       err:
         path: '/a/path/filter2/errsTo'
+    - order: 3
+      processInfo:
+        name: 'lastScan'
+        path: /opt/notReally/filter3Exec
+        startedBy:
+          systemTransition: 'transition from init to something'
+      out:
+        path: '/a/path/filter3/writesTo'
+      err:
+        path: '/a/path/filter3/errsTo'
+
   exit:
     type: 'sender'
     protocol: 'udp'

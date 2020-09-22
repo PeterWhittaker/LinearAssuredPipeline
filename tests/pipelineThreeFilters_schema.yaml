@@ -1,0 +1,133 @@
+pipelineTest: include('pipeline')
+---
+# Pipeline is a sequence of entry, zero or more filters, and exit,
+# but yamale - and YAML - lacks a method of forcing sequence order.
+# Therefore,
+#   - have three required elements in the map, entry, filters, exit
+#   - inclusion of filters is optional; if included, their order is
+#     defined by an 'order' number, which may be overkill, since it
+#     should be possible to link them via the 'out folder' types
+#   - have code know about the sequence and "do the right thing",
+#     mapping from n-1's types to n's, etc.
+# 
+pipeline:
+  entry: include('entry')
+  filters: list(include('filter'), required=False)
+  exit: include('exit')
+
+entry: any(include('receiver'), include('getter'))
+
+# Probably only ever a sender, but maybe folders? TBD...
+exit: any(include('sender'))
+  #type: any(include('sender'), include('folder'))
+
+receiver:
+  type: regex('receiver') # regex forces specific string; str() does not
+  # this should be common between all entry types, but I cannot think of
+  # how to generalize without having an arbitrary placeholder in each one
+  folder: include('folder')
+  common: include('networkAgentCommon')
+  # I'd rather do this, but it is messier than I thought
+  # protocol: include('protocol')
+  protocol: enum('udp')
+  port: include('port')
+
+sender:
+  type: regex('sender') # regex forces specific string; str() does not
+  common: include('networkAgentCommon')
+  # I'd rather do this, but it is messier than I thought
+  # protocol: include('protocol')
+  protocol: enum('udp','ssh')
+
+getter:
+  type: regex('getter') # regex forces specific string; str() does not
+  # this should be common between all entry types, but I cannot think of
+  # how to generalize without having an arbitrary placeholder in each one
+  folder: include('folder')
+  common: include('networkAgentCommon')
+  # I'd rather do this, but it is messier than I thought
+  # protocol: include('protocol')
+  protocol: enum('ssh')
+
+networkAgentCommon:
+  interfaceType: include('interfaceType')
+  processInfo: include('processInfo')
+  # Move this to entry types - only needed there; N+1 gets it from N
+  # # read or write, depending whether entry or exit
+  # folder: include('folder')
+
+# I'd rather do this, but it is messier than I thought
+# protocol: enum('tcp', 'udp', 'ssh') # protocol varies by agent
+
+filter:
+  order:  int() # specify this manually - use this in the generation code....
+  processInfo: include('processInfo')
+  in: include('in', required=False) # get from entry or N-1
+  # the folders are necessary, for their paths (*fc); types can be generated
+  out: include('out')
+  err: include('err')
+  canExecs: include('canExecs', required=False)
+
+canExecs: list(include('canExec'))
+
+canExec:
+  processInfo: include('processInfo')
+  # easiest way to define this, but we will ignore path, e.g., et al,
+  # if defining a canExec - we care mostly/only about processType
+  # maybe canExec is just a list of processTypes this can execute?
+  # or is it better to specify paths and derive processTypes? Hmm...
+
+# is in really necessary? Or is n-1's out?
+in: include('folder')
+
+out: include('folder')
+
+err: include('folder')
+
+admin: include('processInfo')
+
+auth: include('processInfo')
+
+folder:
+  path:    include('path')
+  folderType:    include('folderType', required=False) # autogenerate from elements N and N+1
+  fileTransition:    include('fileTransition', required=False)
+
+processInfo:
+  name: str()
+  path: include('path')   # executable path, for *fc, for transitions
+  description: str(required=False)
+  processType:       include('processType', required=False) # auto-generate for now
+  startedBy:       include('startedBy')
+
+startedBy: any(include('user'), include('system'), include('process'))
+
+user:
+  userRole: include('role')
+  processTransition: include('processTransition', required=False)
+
+# pretty sure this is going to be a placeholder - we will derive the
+# init transition - provided that the string exists, we go this way
+system:
+  systemTransition: include('initTransition')
+
+# included but not currently supported - for later, when we use this more generally
+process: any( include('receiver'), include('sender'), include('getter'), include('pipeline'), include('filter'), include('admin'), include('auth'))
+
+# this is for later, when we use this scheme more generally
+processes: list(include('process'), min=1)
+
+# many of these should be replaced by regex, e.g.
+# primitives/terminals to be validated
+fileTransition:    str() # for now # regex
+initTransition:    str() # for now # regex # only used in system; cf comments thereupon
+processTransition: str() # for now # regex
+
+# fairly well understood primitives/terminals
+port:          int()
+interfaceType: str()  # the SELinux type for the interface # regex
+path:          str()  # for now; likely # regex
+role:          str()  # an SELinux role # regex
+processType:   str()  # the actual SELinux type for the process # regex
+folderType:    str()  # the actual SELinux type for the folder # regex
+

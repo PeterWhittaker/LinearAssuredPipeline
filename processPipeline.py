@@ -2,11 +2,9 @@
 import sys
 import argparse
 from pipeline.readPipelineFromFile import readPipelineFromFile
-from pipeline.extractPipeline import extractPipeline
-from pipeline.viewPipeline import viewPipeline
-from pipeline.buildPipeline import buildPipeline
+from pipeline.extractPipeline import extractPipeline, viewPipeline
 
-def pipelineTest(pipelineName, filename):
+def processPipeline(pipelineName, filename):
     try:
         myPipelineObject = readPipelineFromFile(pipelineName, filename)
     except Exception as err:
@@ -28,21 +26,11 @@ def pipelineTest(pipelineName, filename):
         print('    (Exception message was: "%s")' % err)
         sys.exit(5)
 
-    try:
-        buildPipeline(myPipeline)
-    except Exception as err:
-        print('Unable to build the pipeline. Exiting.')
-        print('    (Exception message was: "%s")' % err)
-        sys.exit(7)
-
-    sys.exit(0)
-
 if __name__ == '__main__':
-    myArgsParser = argparse.ArgumentParser(description='Linear Pipeline testing tool')
+    myArgsParser = argparse.ArgumentParser()
     myArgsParser.add_argument("--filename", required=True)
     myArgsParser.add_argument("--pipelinename", required=True)
 
     myArgs = myArgsParser.parse_args()
 
-    pipelineTest(myArgs.pipelinename, myArgs.filename)
-
+    processPipeline(myArgs.pipelinename, myArgs.filename)
