@@ -2,7 +2,9 @@
 import sys
 import argparse
 from pipeline.readPipelineFromFile import readPipelineFromFile
-from pipeline.extractPipeline import extractPipeline, viewPipeline
+from pipeline.extractPipeline import extractPipeline
+from pipeline.viewPipeline import viewPipeline
+from pipeline.buildPipeline import buildPipeline
 
 def processPipeline(pipelineName, filename):
     try:
@@ -25,6 +27,13 @@ def processPipeline(pipelineName, filename):
         print('Unable to view pipeline details. Odd. Exiting.')
         print('    (Exception message was: "%s")' % err)
         sys.exit(5)
+
+    try:
+        buildPipeline(myPipeline)
+    except Exception as err:
+        print('Unable to build pipeline. Exiting.')
+        print('    (Exception message was: "%s")' % err)
+        sys.exit(7)
 
 if __name__ == '__main__':
     myArgsParser = argparse.ArgumentParser()

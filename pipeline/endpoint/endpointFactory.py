@@ -8,7 +8,7 @@ class Endpoint(object):
         # foldpath = 'path'
         # no longer used
         # foldtype = 'folderType'
-        procname = 'name'
+        procname = 'name' # not using this right now, need to change all of this
         procpath = 'procpath'
         # proctype = 'processType'
         self.startdby = 'startedBy'
@@ -23,7 +23,7 @@ class Endpoint(object):
             # foldpath: anEndpoint['folder'][foldpath],
             # no longer used
             # foldtype: anEndpoint['common']['folder'][foldtype],
-            procname: anEndpoint['common']['processInfo'][procname],
+            'procname': anEndpoint['common']['processInfo'][procname],
             # NOTE: THIS ONE IS DIFFERENT!!! Need to fix this.
             procpath: anEndpoint['common']['processInfo']['path'],
             # proctype: anEndpoint['common']['processInfo'][proctype],

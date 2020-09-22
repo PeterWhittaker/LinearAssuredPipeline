@@ -25,17 +25,21 @@ templatePath="${myParent}/${template}"
 pipelineProcessorPath=${myParent}/${pipelineProcessor}
 [[ ! -x ${pipelineProcessorPath} ]] && { echo "Cannot fund '${pipelineProcessor}', exiting."; exit 91; }
 
+schemaDir="__testFiles__"
+schemaDirPath="${myDir}/${schemaDir}"
+[[ ! -d "${schemaDirPath}" ]] && { echo "Cannot find '${schemaDir}', exiting."; exit 97; }
+
 runTest () {
     set +u
     myTarget="${1}"
     [[ -z ${myTarget} ]] && { echo "No target specified."; finalRC=11; return; }
     set -u
     testFile="${myTarget}.yml"
-    testSchema="${myTarget}_schema.yaml"
+    testSchema="${schemaDirPath}/${myTarget}_schema.yaml"
     [[ ! -r "${testFile}" ]] && { echo "Cannot find '${testFile}'."; finalRC=13; return; }
 
     cat << EOM > ${testSchema}
-pipelineTest: include('pipeline')
+${myTarget}: include('pipeline')
 ---
 EOM
     cat "${templatePath}" >> ${testSchema}
