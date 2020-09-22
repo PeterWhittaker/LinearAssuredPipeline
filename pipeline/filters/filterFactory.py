@@ -7,7 +7,7 @@ class Filter(object):
         # e.g., folderTypes - for now we will autogenerate them
         self.myDict = {
             'order': aFilter['order'],
-            'name': aFilter['processInfo']['name'],
+            'procname': aFilter['processInfo']['name'],
             #'processType': aFilter['processInfo']['processType'],
             'procpath': aFilter['processInfo']['path'],
             self.startdby: aFilter['processInfo'][self.startdby],

@@ -19,7 +19,7 @@ def readPipelineFromFile(pipelineName, filename):
         raise SyntaxError('Unable to get YAML from "%s".' % filename)
 
     try:
-        myPipelineObject = myObj['pipelineTest']
+        myPipelineObject = myObj[pipelineName]
     except:
         raise ValueError('No pipeline "%s" in file "%s".' % (pipelineName, filename))
 

@@ -1,4 +1,4 @@
-pipelineTest:
+pipelineTwoFilters:
   entry:
     type: 'getter'
     folder: # writes to
@@ -11,7 +11,6 @@ pipelineTest:
         path: /opt/notReally/entryExec
         startedBy:
           userRole: 'userrole'
-
   filters:
     - order: 1
       processInfo:
@@ -25,7 +24,7 @@ pipelineTest:
         path: '/a/path/filter1/errsTo'
     - order: 2
       processInfo:
-        name: 'antivirus'
+        name: 'xmlScan'
         path: /opt/notReally/filter2Exec
         startedBy:
           systemTransition: 'transition from init to something'

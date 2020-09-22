@@ -3,9 +3,11 @@
 type -a yamale > /dev/null 2>&1 || { echo "Cannot proceed: No yamale. Exiting."; exit 1; }
 
 # add new tests here
-ALLTESTS="pipelineTest"
+ALLTESTS="pipelineSingleFilter pipelineTwoFilters pipelineThreeFilters"
 target=${1:-all}
 set -u
+
+pipelineProcessor=processPipeline.py
 
 finalRC=0 # assume all will be well
 template=schemaTemplate.yaml
@@ -19,6 +21,9 @@ cd $myDir || { echo "Cannot cd to '$myDir', exiting."; exit 5; }
 templatePath="${myParent}/${template}"
 [[ ! -r ${templatePath} ]] && { echo "Cannot find '${template}', exiting."; exit 7; }
 
+pipelineProcessorPath=${myParent}/processPipeline.py
+[[ ! -x ${pipelineProcessorPath} ]] && { echo "Cannot find '${pipelineProcessor}', exiting."; exit 91; }
+
 runTest () {
     set +u
     myTarget="${1}"
@@ -29,19 +34,31 @@ runTest () {
     [[ ! -r "${testFile}" ]] && { echo "Cannot find '${testFile}'."; finalRC=13; return; }
 
     cat << EOM > ${testSchema}
-pipelineTest: include('pipeline')
+${myTarget}: include('pipeline')
 ---
 EOM
     cat "${templatePath}" >> ${testSchema}
     yamale -p ruamel -s "${testSchema}" "${testFile}"
     case $? in
         0)
-            echo "Test of '${myTarget}' succeeded."
+            echo "Schema validation of '${myTarget}' succeeded."
             ;;
         *)
             echo
-            echo "Test of '${myTarget}' failed. There should be many messages above."
+            echo "Schema validation of '${myTarget}' failed. There should be many messages above."
             finalRC=17
+            ;;
+    esac
+
+    ${pipelineProcessorPath} --pipelinename "${myTarget}" --filename "${testFile}"
+    case $? in
+        0)
+            echo "Pipeline validation of '${myTarget}' succeeded."
+            ;;
+        *)
+            echo
+            echo "Pipeline validation of '${myTarget}' failed. There should be some messages above."
+            finalRC=19
             ;;
     esac
 }
