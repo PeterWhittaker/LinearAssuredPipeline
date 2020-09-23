@@ -9,17 +9,19 @@ def buildPipeline(pipeline):
         firstFilter = filterList[1]
         filterProcName = firstFilter.myDict['procname']
         filterProcPath = firstFilter.myDict['procpath']
-        message = "This will link '"
-        message += entryProcName
-        message += "' ("
-        message += entryProcPath
-        message += ") to '"
-        message += filterProcName
-        message += "' ("
-        message += filterProcPath
-        message += ")"
 
-        myLogger.info(message)
+        if logging.INFO >= logging.root.level:
+            message = "This will link '"
+            message += entryProcName
+            message += "' ("
+            message += entryProcPath
+            message += ") to '"
+            message += filterProcName
+            message += "' ("
+            message += filterProcPath
+            message += ")"
+
+            myLogger.info(message)
 
     def _linkFiltersToExit(filterList, exitObj):
         exitProcName = exitObj.myDict['procname']
@@ -28,34 +30,38 @@ def buildPipeline(pipeline):
         lastFilter = filterList[lastFilterIndex]
         filterProcName = lastFilter.myDict['procname']
         filterProcPath = lastFilter.myDict['procpath']
-        message = "This will link '"
-        message += filterProcName
-        message += "' ("
-        message += filterProcPath
-        message += ") to '"
-        message += exitProcName
-        message += "' ("
-        message += exitProcPath
-        message += ")"
 
-        myLogger.info(message)
+        if logging.INFO >= logging.root.level:
+            message = "This will link '"
+            message += filterProcName
+            message += "' ("
+            message += filterProcPath
+            message += ") to '"
+            message += exitProcName
+            message += "' ("
+            message += exitProcPath
+            message += ")"
+
+            myLogger.info(message)
 
     def _linkFilterPair(filterLeft, filterRight):
         filterLeftProcName = filterLeft.myDict['procname']
         filterLeftProcPath = filterLeft.myDict['procpath']
         filterRightProcName = filterRight.myDict['procname']
         filterRightProcPath = filterRight.myDict['procpath']
-        message = "This will link '"
-        message += filterLeftProcName
-        message += "' ("
-        message += filterLeftProcPath
-        message += ") to '"
-        message += filterRightProcName
-        message += "' ("
-        message += filterRightProcPath
-        message += ")"
 
-        myLogger.info(message)
+        if logging.INFO >= logging.root.level:
+            message = "This will link '"
+            message += filterLeftProcName
+            message += "' ("
+            message += filterLeftProcPath
+            message += ") to '"
+            message += filterRightProcName
+            message += "' ("
+            message += filterRightProcPath
+            message += ")"
+
+            myLogger.info(message)
 
     def _linkFilters(filterList):
         numFilters = len(filterList)
