@@ -63,7 +63,8 @@ filter:
   in: include('in', required=False) # get from entry or N-1
   # the folders are necessary, for their paths (*fc); types can be generated
   out: include('out')
-  err: include('err')
+  # error folder is optional - some models use, some do not not
+  err: include('err', required=False))
   canExecs: include('canExecs', required=False)
 
 canExecs: list(include('canExec'))

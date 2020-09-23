@@ -21,8 +21,6 @@ pipelineSingleFilter:
           systemTransition: 'transition from init to something'
       out:
         path: '/a/path/filter1/writesTo'
-      err:
-        path: '/a/path/filter1/errsTo'
 
   exit:
     type: 'sender'

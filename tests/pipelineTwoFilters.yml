@@ -21,8 +21,6 @@ pipelineTwoFilters:
           systemTransition: 'transition from init to something'
       out:
         path: '/a/path/filter1/writesTo'
-      err:
-        path: '/a/path/filter1/errsTo'
     - order: 2
       processInfo:
         name: 'antivirus'
@@ -31,8 +29,6 @@ pipelineTwoFilters:
           systemTransition: 'transition from init to something'
       out:
         path: '/a/path/filter2/writesTo'
-      err:
-        path: '/a/path/filter2/errsTo'
   exit:
     type: 'sender'
     protocol: 'udp'
