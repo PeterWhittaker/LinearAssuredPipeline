@@ -3,8 +3,7 @@
 # Therefore,
 #   - have three required elements in the map, entry, filters, exit
 #   - inclusion of filters is optional; if included, their order is
-#     defined by an 'order' number, which may be overkill, since it
-#     should be possible to link them via the 'out folder' types
+#     defined by an 'order' number
 #   - have code know about the sequence and "do the right thing",
 #     mapping from n-1's types to n's, etc.
 # 
