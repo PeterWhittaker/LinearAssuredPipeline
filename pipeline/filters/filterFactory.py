@@ -18,7 +18,7 @@ class Filter(object):
             #'inFolderType':aFilter['in']['folderType'],
             'outFolderPath':aFilter['out']['path'],
             #'outFolderType':aFilter['out']['folderType'],
-            'errFolderPath':aFilter['err']['path'] #,
+            #'errFolderPath':aFilter['err']['path'] #,
             #'errFolderType':aFilter['err']['folderType']
         }
 

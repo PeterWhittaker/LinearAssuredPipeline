@@ -63,7 +63,7 @@ filter:
   # the folders are necessary, for their paths (*fc); types can be generated
   out: include('out')
   # error folder is optional - some models use, some do not not
-  err: include('err', required=False))
+  err: include('err', required=False)
   canExecs: include('canExecs', required=False)
 
 canExecs: list(include('canExec'))
@@ -97,6 +97,26 @@ processInfo:
   description: str(required=False)
   processType:       include('processType', required=False) # auto-generate for now
   startedBy:       include('startedBy')
+  # processes often need to log....
+  logging: list(include('logging'), required=False)
+
+logging: any( include('logFolder'), include('logNetwork') )
+
+logFolder:
+  # will need basic dir perms on the folder
+  folder: include('folder')
+  # if included, is a specific file to write to
+  file:   include('path', required=False)
+
+logNetwork:
+  # if included, will need basic access to this interface
+  interfaceType: include('interfaceType', required=False)
+  # depending on the port or protocol, additional perms may be required
+  port: include('port', required=False)
+  protocol: include('loggingProtocol', required=False)
+
+# really a placeholder for now, need to figure this out
+loggingProtocol: enum('udp','tcp','syslog','ssh')
 
 startedBy: any(include('user'), include('system'), include('process'))
 
