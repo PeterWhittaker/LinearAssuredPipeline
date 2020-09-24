@@ -9,6 +9,6 @@ class NetworkAgent(object):
     # Optional or generated elements:
     #   none
 
-    def init(self):
+    def __init__(self):
         self.message = 'This class does nothing yet.'
 

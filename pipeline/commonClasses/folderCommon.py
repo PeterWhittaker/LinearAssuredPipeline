@@ -18,6 +18,6 @@ class Folder(object):
     #                   supported. Applicable to the pipeline only and not
     #                   to logging (right)?
 
-    def init(self):
+    def __init__(self):
         self.message = 'This class does nothing yet.'
 

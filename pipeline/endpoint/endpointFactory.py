@@ -1,4 +1,5 @@
 import logging
+from ..commonClasses.processInfoCommon import ProcessInfo
 
 class Endpoint(object):
     def __init__(self, anEndpoint):
@@ -7,30 +8,15 @@ class Endpoint(object):
         endpttyp = 'type'
         protocol = 'protocol'
         infctype = 'interfaceType'
-        # now only in entry objects
-        # foldpath = 'path'
-        # no longer used
-        # foldtype = 'folderType'
-        procname = 'name' # not using this right now, need to change all of this
         procpath = 'procpath'
-        # proctype = 'processType'
         self.startdby = 'startedBy'
-        # if this was replaced by a series of properties, we would have more
-        # control over raising NotImplementedError for parts not yet supported,
-        # e.g., folderTypes - for now we will autogenerate them
+        self.processInfo = ProcessInfo(anEndpoint['common']['processInfo'])
         self.myDict = {
             endpttyp: anEndpoint[endpttyp],
             protocol: anEndpoint[protocol],
             infctype: anEndpoint['common'][infctype],
-            # now only in entry objects
-            # foldpath: anEndpoint['folder'][foldpath],
-            # no longer used
-            # foldtype: anEndpoint['common']['folder'][foldtype],
-            'procname': anEndpoint['common']['processInfo'][procname],
-            # NOTE: THIS ONE IS DIFFERENT!!! Need to fix this.
-            procpath: anEndpoint['common']['processInfo']['path'],
-            # proctype: anEndpoint['common']['processInfo'][proctype],
-            self.startdby: anEndpoint['common']['processInfo'][self.startdby]
+            'procname': self.processInfo.name,
+            'procpath': self.processInfo.path,
         }
 
     def cycleThrough(self):

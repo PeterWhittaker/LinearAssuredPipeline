@@ -42,6 +42,6 @@ class ProcessLogging(object):
     #                   'syslog', and 'ssh'. Exists in case additional
     #                   permissions are needed based on protocol used.
 
-    def init(self):
+    def __init__(self):
         self.message = 'This class does nothing yet.'
 
