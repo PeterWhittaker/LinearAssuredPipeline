@@ -44,35 +44,43 @@ class Pipeline(object):
         return myPipelineObject
 
     def _extractPipeline(self):
+        myLogger = logging.getLogger('Pipeline:_extractPipeline')
+
         try:
             myEntry = self.rawPipeline['entry']
         except Exception as err:
             raise ValueError('Unable to extract entry element from pipeline: "%s"' % err)
-            
+        else:
+            try:
+                self.entryObj = endpointFactory(myEntry)
+            except Exception as err:
+                raise ValueError('Unable to convert "entry" element to endpoint object: "%s"' % err)
+
+        # set a default value
+        self.hasFilters = False
         try:
             myFilters = self.rawPipeline['filters']
-        except Exception as err:
-            raise ValueError('Unable to extract filter element(s) from pipeline: "%s"' % err)
-            
+        #except Exception as err:
+        except:
+            #raise ValueError('Unable to extract filter element(s) from pipeline: "%s"' % err)
+            myLogger.warning("There are no filters in '%s', was that expected?" % self.pipelineName)
+        else:
+            try:
+                self.filterList = filterFactory(myFilters)
+            except Exception as err:
+                raise ValueError('Unable to convert "filter" element(s) to filter list: "%s"' % err)
+            else:
+                self.hasFilters = True
+
         try:
             myExit = self.rawPipeline['exit']
         except Exception as err:
             raise ValueError('Unable to extract exit element from pipeline: "%s"' % err)
-            
-        try:
-            self.entryObj = endpointFactory(myEntry)
-        except Exception as err:
-            raise ValueError('Unable to convert "entry" element to endpoint object: "%s"' % err)
-
-        try:
-            self.filterList = filterFactory(myFilters)
-        except Exception as err:
-            raise ValueError('Unable to convert "filter" element(s) to filter list: "%s"' % err)
-
-        try:
-            self.exitObj = endpointFactory(myExit)
-        except Exception as err:
-            raise ValueError('Unable to convert "exit" element to endpoint object: "%s"' % err)
+        else:
+            try:
+                self.exitObj = endpointFactory(myExit)
+            except Exception as err:
+                raise ValueError('Unable to convert "exit" element to endpoint object: "%s"' % err)
 
     def _viewPipeline(self):
         myLogger = logging.getLogger('Pipeline:_viewPipeline')
@@ -100,8 +108,9 @@ class Pipeline(object):
         try:
             myLogger.debug("viewing 'entry'")
             _viewEntry(self.entryObj)
-            myLogger.debug("viewing filters")
-            _viewFilters(self.filterList)
+            if self.hasFilters:
+                myLogger.debug("viewing filters")
+                _viewFilters(self.filterList)
             myLogger.debug("viewing 'exit'")
             _viewExit(self.exitObj)
         except Exception as err:
@@ -111,6 +120,15 @@ class Pipeline(object):
     def _buildPipeline(self):
         myLogger = logging.getLogger('Pipeline:_buildPipeline')
 
+        def _linkEntryToExit(entryObj, exitObj):
+            entryProcName = entryObj.myDict['procname']
+            entryProcPath = entryObj.myDict['procpath']
+            exitProcName = exitObj.myDict['procname']
+            exitProcPath = exitObj.myDict['procpath']
+
+            if logging.INFO >= logging.root.level:
+                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (entryProcName, entryProcPath, exitProcName, exitProcPath) )
+
         def _linkEntryToFilters(entryObj, filterList):
             entryProcName = entryObj.myDict['procname']
             entryProcPath = entryObj.myDict['procpath']
@@ -119,17 +137,7 @@ class Pipeline(object):
             filterProcPath = firstFilter.myDict['procpath']
 
             if logging.INFO >= logging.root.level:
-                message = "This will link '"
-                message += entryProcName
-                message += "' ("
-                message += entryProcPath
-                message += ") to '"
-                message += filterProcName
-                message += "' ("
-                message += filterProcPath
-                message += ")"
-
-                myLogger.info(message)
+                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (entryProcName, entryProcPath, filterProcName, filterProcPath) )
 
         def _linkFiltersToExit(filterList, exitObj):
             exitProcName = exitObj.myDict['procname']
@@ -140,17 +148,7 @@ class Pipeline(object):
             filterProcPath = lastFilter.myDict['procpath']
 
             if logging.INFO >= logging.root.level:
-                message = "This will link '"
-                message += filterProcName
-                message += "' ("
-                message += filterProcPath
-                message += ") to '"
-                message += exitProcName
-                message += "' ("
-                message += exitProcPath
-                message += ")"
-
-                myLogger.info(message)
+                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (filterProcName, filterProcPath, exitProcName, exitProcPath) )
 
         def _linkFilterPair(filterLeft, filterRight):
             filterLeftProcName = filterLeft.myDict['procname']
@@ -159,17 +157,7 @@ class Pipeline(object):
             filterRightProcPath = filterRight.myDict['procpath']
 
             if logging.INFO >= logging.root.level:
-                message = "This will link '"
-                message += filterLeftProcName
-                message += "' ("
-                message += filterLeftProcPath
-                message += ") to '"
-                message += filterRightProcName
-                message += "' ("
-                message += filterRightProcPath
-                message += ")"
-
-                myLogger.info(message)
+                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (filterLeftProcName, filterLeftProcPath, filterRightProcName, filterRightProcPath) )
 
         def _linkFilters(filterList):
             numFilters = len(filterList)
@@ -182,12 +170,16 @@ class Pipeline(object):
                 _linkFilterPair(filterList[filterLeftIndex], filterList[filterRightIndex])
 
         try:
-            myLogger.debug("linking 'entry' to first filter")
-            _linkEntryToFilters(self.entryObj, self.filterList)
-            myLogger.debug("linking filters")
-            _linkFilters(self.filterList)
-            myLogger.debug("linking last filter to 'exit'")
-            _linkFiltersToExit(self.filterList, self.exitObj)
+            if self.hasFilters:
+                myLogger.debug("linking 'entry' to first filter")
+                _linkEntryToFilters(self.entryObj, self.filterList)
+                myLogger.debug("linking filters")
+                _linkFilters(self.filterList)
+                myLogger.debug("linking last filter to 'exit'")
+                _linkFiltersToExit(self.filterList, self.exitObj)
+            else:
+                myLogger.debug("linking 'entry' to 'exit'")
+                _linkEntryToExit(self.entryObj, self.exitObj)
         except Exception as err:
             raise ValueError("Could not access pipeline elements in 'buildPipeline'. Exception message was '%s'" % err)
 

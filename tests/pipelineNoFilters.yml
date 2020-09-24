@@ -1,0 +1,24 @@
+pipelineNoFilters:
+  entry:
+    type: 'getter'
+    folder: # writes to
+      path: '/a/path/entry/writesTo'
+    protocol: 'ssh'
+    common:
+      interfaceType: 'lowInterface'
+      processInfo:
+        name: 'my SSH getter'
+        path: /opt/notReally/entryExec
+        startedBy:
+          userRole: 'userrole'
+
+  exit:
+    type: 'sender'
+    protocol: 'udp'
+    common:
+      interfaceType: 'highInterface'
+      processInfo:
+        name: 'my UDP putter'
+        path: /opt/notReally/exitExec
+        startedBy:
+          systemTransition: 'transition from init to something'

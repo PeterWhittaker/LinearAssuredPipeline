@@ -3,7 +3,7 @@
 type -a yamale > /dev/null 2>&1 || { echo "Cannot proceed: No yamale. Exiting."; exit 1; }
 
 # add new tests here
-ALLTESTS=" pipelineSingleFilter pipelineTwoFilters pipelineThreeFilters"
+ALLTESTS="pipelineNoFilters pipelineSingleFilter pipelineTwoFilters pipelineThreeFilters"
 
 target=${1:-all}
 set -u
