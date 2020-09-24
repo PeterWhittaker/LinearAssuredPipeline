@@ -1,34 +1,26 @@
 import logging
+from ..commonClasses.processInfoCommon import ProcessInfo
 
 class Filter(object):
     def __init__(self, aFilter):
-        self.message = 'This filter does nothing yet.'
-        self.startdby= 'startedBy'
         self.myLogger = logging.getLogger('ClassFilter')
-        # if this was replaced by a series of properties, we would have more
-        # control over raising NotImplementedError for parts not yet supported,
-        # e.g., folderTypes - for now we will autogenerate them
+        order = 'order'
+        procinfo = 'processInfo'
+        self.processInfo = ProcessInfo(aFilter[procinfo])
         self.myDict = {
-            'order': aFilter['order'],
-            'procname': aFilter['processInfo']['name'],
-            #'processType': aFilter['processInfo']['processType'],
-            'procpath': aFilter['processInfo']['path'],
-            self.startdby: aFilter['processInfo'][self.startdby],
-            #'inFolderPath':aFilter['in']['path'],
-            #'inFolderType':aFilter['in']['folderType'],
+            order: aFilter[order],
             'outFolderPath':aFilter['out']['path'],
-            #'outFolderType':aFilter['out']['folderType'],
-            #'errFolderPath':aFilter['err']['path'] #,
-            #'errFolderType':aFilter['err']['folderType']
+            'procname': self.processInfo.name,
+            'procpath': self.processInfo.path,
+            'procStartedByUser'   : self.processInfo.startedByUser,
+            'procUserRole'        : self.processInfo.userRole,
+            'procTransition'      : self.processInfo.processTransition,
+            'procStartedBySystem' : self.processInfo.startedBySystem,
         }
 
     def cycleThrough(self):
         for key, value in self.myDict.items():
-            if key is not self.startdby:
-                self.myLogger.info("%s%s" % (key, value))
-            else:
-                for key, value in self.myDict[self.startdby].items():
-                    self.myLogger.info("%s%s" % (key, value))
+            self.myLogger.info("%s:'%s'" % (key, value))
 
     def validateNext(self, nextFilter):
         try:
@@ -46,10 +38,6 @@ class Filter(object):
     @property
     def order(self):
         return self.myDict['order']
-
-    @property
-    def getMsg(self):
-        return self.message
 
 def _filterFactory(aFilter):
     try:

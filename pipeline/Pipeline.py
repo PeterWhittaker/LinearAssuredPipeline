@@ -96,12 +96,10 @@ class Pipeline(object):
 
         def _viewEntry(myEntryObj):
             myLogger.debug("in _viewEntry")
-            myLogger.info(myEntryObj.getMsg)
             myEntryObj.cycleThrough()
             myLogger.info("")
 
         def _viewExit(myExitObj):
-            myLogger.info(myExitObj.getMsg)
             myExitObj.cycleThrough()
             myLogger.info("")
 
@@ -110,7 +108,6 @@ class Pipeline(object):
             myLogger.info('%s filters' % numFilters)
             for i in range(numFilters):
                 key = i + 1
-                myLogger.info(myFilterList[key].getMsg)
                 myFilterList[key].cycleThrough()
                 myLogger.info("")
 

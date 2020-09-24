@@ -26,7 +26,6 @@ class ProcessInfo(object):
 
     def __init__(self, aMap):
         self.myLogger = logging.getLogger('ProcessInfo')
-        self.myLogger.warning(aMap)
         try:
             self._name = aMap['name']
         except:

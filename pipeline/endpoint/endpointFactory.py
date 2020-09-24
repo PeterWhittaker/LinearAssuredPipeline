@@ -3,45 +3,38 @@ from ..commonClasses.processInfoCommon import ProcessInfo
 
 class Endpoint(object):
     def __init__(self, anEndpoint):
-        self.message = 'This does nothing yet.'
         self.myLogger = logging.getLogger('Endpoint')
+        common   = 'common'
         endpttyp = 'type'
         protocol = 'protocol'
         infctype = 'interfaceType'
-        procpath = 'procpath'
-        self.startdby = 'startedBy'
-        self.processInfo = ProcessInfo(anEndpoint['common']['processInfo'])
+        procinfo = 'processInfo'
+        self.processInfo = ProcessInfo(anEndpoint[common][procinfo])
         self.myDict = {
             endpttyp: anEndpoint[endpttyp],
             protocol: anEndpoint[protocol],
-            infctype: anEndpoint['common'][infctype],
+            infctype: anEndpoint[common][infctype],
             'procname': self.processInfo.name,
             'procpath': self.processInfo.path,
+            'procStartedByUser'   : self.processInfo.startedByUser,
+            'procUserRole'        : self.processInfo.userRole,
+            'procTransition'      : self.processInfo.processTransition,
+            'procStartedBySystem' : self.processInfo.startedBySystem,
         }
 
     def cycleThrough(self):
         for key, value in self.myDict.items():
-            if key is not self.startdby:
-                self.myLogger.info("%s%s" % (key, value))
-            else:
-                for key, value in self.myDict[self.startdby].items():
-                    self.myLogger.info("%s%s" % (key, value))
-
-    @property
-    def getMsg(self):
-        return self.message
+            self.myLogger.info("%s: '%s'" % (key, value))
 
 class Entry(Endpoint):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
         foldpath = 'path'
         self.myDict.setdefault('foldpath', anEndpoint['folder'][foldpath])
-        self.message = 'This entry does nothing yet.'
 
 class Receiver(Entry):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
-        self.message = 'This receiver does nothing yet.'
         try:
             thePort = anEndpoint['port']
         except:
@@ -53,17 +46,14 @@ class Receiver(Entry):
 class Getter(Entry):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
-        self.message = 'This getter does nothing yet.'
 
 class Exit(Endpoint):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
-        self.message = 'This exit does nothing yet.'
 
 class Sender(Exit):
     def __init__(self, anEndpoint):
         super().__init__(anEndpoint)
-        self.message = 'This sender does nothing yet.'
 
 def endpointFactory(myEndpoint):
     try:
