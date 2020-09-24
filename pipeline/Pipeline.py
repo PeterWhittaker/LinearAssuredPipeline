@@ -10,9 +10,11 @@ class Pipeline(object):
         self.pipelineFile = pipelineFile
         self.myLogger = logging.getLogger('Pipeline')
 
-        self.rawPipeline = self._readPipelineFromFile()
+        # sets self.rawPipeline
+        self._readPipelineFromFile()
 
-        self.pipeline = self._extractPipeline()
+        # sets self.entryObj,self.filterList and/or self.hasFilters, self.exitObj
+        self._extractPipeline()
 
         if logging.DEBUG >= logging.root.level:
             self._viewPipeline()
@@ -41,46 +43,53 @@ class Pipeline(object):
         except Exception as err:
             raise ValueError("No pipeline '%s' in file '%s'. Exception message '%s'" % (self.pipelineName, self.pipelineFile, err))
 
-        return myPipelineObject
+        self.rawPipeline = myPipelineObject
 
     def _extractPipeline(self):
         myLogger = logging.getLogger('Pipeline:_extractPipeline')
 
-        try:
-            myEntry = self.rawPipeline['entry']
-        except Exception as err:
-            raise ValueError('Unable to extract entry element from pipeline: "%s"' % err)
-        else:
+        def _extractEntry():
             try:
-                self.entryObj = endpointFactory(myEntry)
+                myEntry = self.rawPipeline['entry']
             except Exception as err:
-                raise ValueError('Unable to convert "entry" element to endpoint object: "%s"' % err)
-
-        # set a default value
-        self.hasFilters = False
-        try:
-            myFilters = self.rawPipeline['filters']
-        #except Exception as err:
-        except:
-            #raise ValueError('Unable to extract filter element(s) from pipeline: "%s"' % err)
-            myLogger.warning("There are no filters in '%s', was that expected?" % self.pipelineName)
-        else:
-            try:
-                self.filterList = filterFactory(myFilters)
-            except Exception as err:
-                raise ValueError('Unable to convert "filter" element(s) to filter list: "%s"' % err)
+                raise ValueError('Unable to extract entry element from pipeline: "%s"' % err)
             else:
-                self.hasFilters = True
+                try:
+                    self.entryObj = endpointFactory(myEntry)
+                except Exception as err:
+                    raise ValueError('Unable to convert "entry" element to endpoint object: "%s"' % err)
 
-        try:
-            myExit = self.rawPipeline['exit']
-        except Exception as err:
-            raise ValueError('Unable to extract exit element from pipeline: "%s"' % err)
-        else:
+        def _extractFilters():
+            # set a default value
+            self.hasFilters = False
             try:
-                self.exitObj = endpointFactory(myExit)
+                myFilters = self.rawPipeline['filters']
+            #except Exception as err:
+            except:
+                #raise ValueError('Unable to extract filter element(s) from pipeline: "%s"' % err)
+                myLogger.warning("There are no filters in '%s', was that expected?" % self.pipelineName)
+            else:
+                try:
+                    self.filterList = filterFactory(myFilters)
+                except Exception as err:
+                    raise ValueError('Unable to convert "filter" element(s) to filter list: "%s"' % err)
+                else:
+                    self.hasFilters = True
+
+        def _extractExit():
+            try:
+                myExit = self.rawPipeline['exit']
             except Exception as err:
-                raise ValueError('Unable to convert "exit" element to endpoint object: "%s"' % err)
+                raise ValueError('Unable to extract exit element from pipeline: "%s"' % err)
+            else:
+                try:
+                    self.exitObj = endpointFactory(myExit)
+                except Exception as err:
+                    raise ValueError('Unable to convert "exit" element to endpoint object: "%s"' % err)
+
+        _extractEntry()
+        _extractFilters()
+        _extractExit()
 
     def _viewPipeline(self):
         myLogger = logging.getLogger('Pipeline:_viewPipeline')
@@ -115,7 +124,6 @@ class Pipeline(object):
             _viewExit(self.exitObj)
         except Exception as err:
             raise ValueError("Could not access pipeline elements in 'viewPipeline'. Exception message was '%s'" % err)
-
 
     def _buildPipeline(self):
         myLogger = logging.getLogger('Pipeline:_buildPipeline')
