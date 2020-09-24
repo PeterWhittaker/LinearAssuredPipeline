@@ -126,8 +126,7 @@ class Pipeline(object):
             exitProcName = exitObj.myDict['procname']
             exitProcPath = exitObj.myDict['procpath']
 
-            if logging.INFO >= logging.root.level:
-                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (entryProcName, entryProcPath, exitProcName, exitProcPath) )
+            myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (entryProcName, entryProcPath, exitProcName, exitProcPath) )
 
         def _linkEntryToFilters(entryObj, filterList):
             entryProcName = entryObj.myDict['procname']
@@ -136,8 +135,7 @@ class Pipeline(object):
             filterProcName = firstFilter.myDict['procname']
             filterProcPath = firstFilter.myDict['procpath']
 
-            if logging.INFO >= logging.root.level:
-                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (entryProcName, entryProcPath, filterProcName, filterProcPath) )
+            myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (entryProcName, entryProcPath, filterProcName, filterProcPath) )
 
         def _linkFiltersToExit(filterList, exitObj):
             exitProcName = exitObj.myDict['procname']
@@ -147,8 +145,7 @@ class Pipeline(object):
             filterProcName = lastFilter.myDict['procname']
             filterProcPath = lastFilter.myDict['procpath']
 
-            if logging.INFO >= logging.root.level:
-                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (filterProcName, filterProcPath, exitProcName, exitProcPath) )
+            myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (filterProcName, filterProcPath, exitProcName, exitProcPath) )
 
         def _linkFilterPair(filterLeft, filterRight):
             filterLeftProcName = filterLeft.myDict['procname']
@@ -156,8 +153,7 @@ class Pipeline(object):
             filterRightProcName = filterRight.myDict['procname']
             filterRightProcPath = filterRight.myDict['procpath']
 
-            if logging.INFO >= logging.root.level:
-                myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (filterLeftProcName, filterLeftProcPath, filterRightProcName, filterRightProcPath) )
+            myLogger.info("This will link '%s' (%s) to '%s' (%s)" % (filterLeftProcName, filterLeftProcPath, filterRightProcName, filterRightProcPath) )
 
         def _linkFilters(filterList):
             numFilters = len(filterList)
