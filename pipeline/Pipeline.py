@@ -44,8 +44,6 @@ class Pipeline(object):
         return myPipelineObject
 
     def _extractPipeline(self):
-        extractedPipeline = {}
-
         try:
             myEntry = self.rawPipeline['entry']
         except Exception as err:
@@ -62,28 +60,19 @@ class Pipeline(object):
             raise ValueError('Unable to extract exit element from pipeline: "%s"' % err)
             
         try:
-            myEntryObj = endpointFactory(myEntry)
+            self.entryObj = endpointFactory(myEntry)
         except Exception as err:
             raise ValueError('Unable to convert "entry" element to endpoint object: "%s"' % err)
 
-        extractedPipeline.setdefault('entry', myEntryObj)
-
         try:
-            myFilterList = filterFactory(myFilters)
+            self.filterList = filterFactory(myFilters)
         except Exception as err:
             raise ValueError('Unable to convert "filter" element(s) to filter list: "%s"' % err)
 
-        extractedPipeline.setdefault('filters', myFilterList)
-
         try:
-            myExitObj = endpointFactory(myExit)
+            self.exitObj = endpointFactory(myExit)
         except Exception as err:
             raise ValueError('Unable to convert "exit" element to endpoint object: "%s"' % err)
-
-        extractedPipeline.setdefault('exit', myExitObj)
-
-        # we only get here if the pipeline is good
-        return extractedPipeline
 
     def _viewPipeline(self):
         myLogger = logging.getLogger('Pipeline:_viewPipeline')
@@ -109,20 +98,12 @@ class Pipeline(object):
                 myLogger.info("")
 
         try:
-            myLogger.debug("extracting 'entry'")
-            entryObj   = self.pipeline['entry']
-            myLogger.debug("extracting 'filters'")
-            filterList = self.pipeline['filters']
-            myLogger.debug("extracting 'exit'")
-            exitObj    = self.pipeline['exit']
-
             myLogger.debug("viewing 'entry'")
-            _viewEntry(entryObj)
+            _viewEntry(self.entryObj)
             myLogger.debug("viewing filters")
-            _viewFilters(filterList)
+            _viewFilters(self.filterList)
             myLogger.debug("viewing 'exit'")
-            _viewExit(exitObj)
-
+            _viewExit(self.exitObj)
         except Exception as err:
             raise ValueError("Could not access pipeline elements in 'viewPipeline'. Exception message was '%s'" % err)
 
@@ -201,20 +182,12 @@ class Pipeline(object):
                 _linkFilterPair(filterList[filterLeftIndex], filterList[filterRightIndex])
 
         try:
-            myLogger.debug("extracting 'entry'")
-            entryObj   = self.pipeline['entry']
-            myLogger.debug("extracting 'filters'")
-            filterList = self.pipeline['filters']
-            myLogger.debug("extracting 'exit'")
-            exitObj    = self.pipeline['exit']
-
             myLogger.debug("linking 'entry' to first filter")
-            _linkEntryToFilters(entryObj, filterList)
+            _linkEntryToFilters(self.entryObj, self.filterList)
             myLogger.debug("linking filters")
-            _linkFilters(filterList)
+            _linkFilters(self.filterList)
             myLogger.debug("linking last filter to 'exit'")
-            _linkFiltersToExit(filterList, exitObj)
-
+            _linkFiltersToExit(self.filterList, self.exitObj)
         except Exception as err:
             raise ValueError("Could not access pipeline elements in 'buildPipeline'. Exception message was '%s'" % err)
 
