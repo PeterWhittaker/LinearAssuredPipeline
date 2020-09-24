@@ -3,42 +3,7 @@ import sys
 import argparse
 import logging
 
-from pipeline.readPipelineFromFile import readPipelineFromFile
-from pipeline.extractPipeline import extractPipeline
-from pipeline.viewPipeline import viewPipeline
-from pipeline.buildPipeline import buildPipeline
-
-def processPipeline(pipelineName, filename):
-    try:
-        myPipelineObject = readPipelineFromFile(pipelineName, filename)
-    except Exception as err:
-        print('Unable to get "%s" from file "%s". Exiting.' % (pipelineName, filename))
-        print('    (Exception message was: "%s")' % err)
-        return 1
-
-    try:
-        myPipeline = extractPipeline(myPipelineObject)
-    except Exception as err:
-        print('Unable to encode "%s" for further processing. Exiting.' % pipelineName)
-        print('    (Exception message was: "%s")' % err)
-        return 3
-
-    if logging.DEBUG >= logging.root.level:
-        try:
-            viewPipeline(myPipeline)
-        except Exception as err:
-            print('Unable to view pipeline details. Odd. Exiting.')
-            print('    (Exception message was: "%s")' % err)
-            return 5
-
-    try:
-        buildPipeline(myPipeline)
-    except Exception as err:
-        print('Unable to build pipeline. Exiting.')
-        print('    (Exception message was: "%s")' % err)
-        return 7
-
-    return 0
+from pipeline.Pipeline import Pipeline
 
 if __name__ == '__main__':
     myArgsParser = argparse.ArgumentParser()
@@ -60,8 +25,8 @@ if __name__ == '__main__':
     myLogger = logging.getLogger('processPipeline')
     myLogger.debug('Logging enabled.')
 
-    myLogger.debug("Calling 'processPipeline' with pipeline '%s' and file '%s'" % (pipelineName, filename) )
-    exitCode = processPipeline(pipelineName, filename)
+    myLogger.debug("Creating pipeline '%s' from file '%s'" % (pipelineName, filename) )
+    myPipeline = Pipeline(pipelineName, filename)
 
-    myLogger.debug("Exiting with return code '%s'." % exitCode)
-    sys.exit(exitCode)
+    myPipeline.build()
+
